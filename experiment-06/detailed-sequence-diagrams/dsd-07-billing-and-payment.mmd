@@ -3,7 +3,7 @@ sequenceDiagram
     actor Cashier as Cashier
     participant UI as BillingUI
     participant Ctrl as BillingController
-    participant BillRepo as BillRepository
+    participant BillEntity as Bill
     participant Gateway as PaymentGatewayAdapter
     participant ReceiptEntity as Receipt
 
@@ -11,10 +11,10 @@ sequenceDiagram
     activate UI
     UI->>Ctrl: calculateBill(patientId)
     activate Ctrl
-    Ctrl->>BillRepo: fetchUnbilledItems(patientId)
-    activate BillRepo
-    BillRepo-->>Ctrl: unbilledItemList
-    deactivate BillRepo
+    Ctrl->>BillEntity: fetchUnbilledItems(patientId)
+    activate BillEntity
+    BillEntity-->>Ctrl: unbilledItemList
+    deactivate BillEntity
     Ctrl->>Ctrl: calculateTaxAndDiscounts()
     Ctrl-->>UI: displayConsolidatedBill(billObj)
     deactivate Ctrl
@@ -27,10 +27,10 @@ sequenceDiagram
     Gateway-->>Ctrl: txnResponse(status="SUCCESS", txnRef="TXN-90812")
     deactivate Gateway
     alt Payment Successful
-        Ctrl->>BillRepo: updateStatus(billId, "Paid")
-        activate BillRepo
-        BillRepo-->>Ctrl: billUpdated
-        deactivate BillRepo
+        Ctrl->>BillEntity: updateStatus(billId, "Paid")
+        activate BillEntity
+        BillEntity-->>Ctrl: billUpdated
+        deactivate BillEntity
         Ctrl->>ReceiptEntity: generateReceipt(billId, txnRef)
         activate ReceiptEntity
         ReceiptEntity-->>Ctrl: receiptObj

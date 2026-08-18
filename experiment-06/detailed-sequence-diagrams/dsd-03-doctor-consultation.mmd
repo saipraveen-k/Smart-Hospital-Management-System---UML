@@ -3,7 +3,7 @@ sequenceDiagram
     actor Doctor as Doctor
     participant UI as ConsultationUI
     participant Ctrl as ConsultationController
-    participant MedRecRepo as MedicalRecordRepository
+    participant MedRecEntity as MedicalRecord
     participant ConsultEntity as Consultation
     participant RxEntity as Prescription
     participant LabOrderEntity as LabTestOrder
@@ -12,10 +12,10 @@ sequenceDiagram
     activate UI
     UI->>Ctrl: getMedicalHistory(patientId)
     activate Ctrl
-    Ctrl->>MedRecRepo: findByPatientId(patientId)
-    activate MedRecRepo
-    MedRecRepo-->>Ctrl: medicalRecordObj
-    deactivate MedRecRepo
+    Ctrl->>MedRecEntity: findByPatientId(patientId)
+    activate MedRecEntity
+    MedRecEntity-->>Ctrl: medicalRecordObj
+    deactivate MedRecEntity
     Ctrl-->>UI: renderEHRSummary(medicalRecordObj)
     deactivate Ctrl
 
@@ -41,10 +41,10 @@ sequenceDiagram
         deactivate LabOrderEntity
     end
 
-    Ctrl->>MedRecRepo: appendConsultation(patientId, consultObj)
-    activate MedRecRepo
-    MedRecRepo-->>Ctrl: updatedRecord
-    deactivate MedRecRepo
+    Ctrl->>MedRecEntity: appendConsultation(consultObj)
+    activate MedRecEntity
+    MedRecEntity-->>Ctrl: updatedRecord
+    deactivate MedRecEntity
 
     Ctrl-->>UI: return ConsultationSuccess(consultationId)
     UI-->>Doctor: displaySuccessNotification()

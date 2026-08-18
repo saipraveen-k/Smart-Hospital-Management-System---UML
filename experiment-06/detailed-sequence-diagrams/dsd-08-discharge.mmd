@@ -3,44 +3,44 @@ sequenceDiagram
     actor Receptionist as Receptionist / Doctor
     participant UI as AdmissionUI
     participant Ctrl as AdmissionController
-    participant BillRepo as BillRepository
-    participant AdmRepo as AdmissionRepository
+    participant BillEntity as Bill
+    participant AdmEntity as Admission
     participant BedEntity as Bed
 
     Doctor->>UI: submitDischargeSummary(admissionId, summaryDto)
     activate UI
     UI->>Ctrl: saveDischargeSummary(admissionId, summaryDto)
     activate Ctrl
-    Ctrl->>AdmRepo: appendDischargeSummary(admissionId, summaryDto)
-    activate AdmRepo
-    AdmRepo-->>Ctrl: summarySaved
-    deactivate AdmRepo
+    Ctrl->>AdmEntity: appendDischargeSummary(admissionId, summaryDto)
+    activate AdmEntity
+    AdmEntity-->>Ctrl: summarySaved
+    deactivate AdmEntity
     Ctrl-->>UI: return SummarySavedSuccess()
     deactivate Ctrl
 
     Receptionist->>UI: finalizeDischarge(admissionId)
     UI->>Ctrl: executeDischarge(admissionId)
     activate Ctrl
-    Ctrl->>BillRepo: getBillStatusByAdmission(admissionId)
-    activate BillRepo
-    BillRepo-->>Ctrl: billStatus = "Paid"
-    deactivate BillRepo
+    Ctrl->>BillEntity: getBillStatusByAdmission(admissionId)
+    activate BillEntity
+    BillEntity-->>Ctrl: billStatus = "Paid"
+    deactivate BillEntity
     alt Bill Pending Payment
         Ctrl-->>UI: return Error("Unpaid bill balance pending")
         UI-->>Receptionist: displayPendingBillBlockAlert()
     else Bill Paid
-        Ctrl->>AdmRepo: getAdmissionBedId(admissionId)
-        activate AdmRepo
-        AdmRepo-->>Ctrl: bedId
-        deactivate AdmRepo
+        Ctrl->>AdmEntity: getAdmissionBedId(admissionId)
+        activate AdmEntity
+        AdmEntity-->>Ctrl: bedId
+        deactivate AdmEntity
         Ctrl->>BedEntity: updateStatus(bedId, "Available")
         activate BedEntity
         BedEntity-->>Ctrl: bedReleased
         deactivate BedEntity
-        Ctrl->>AdmRepo: updateStatus(admissionId, "Discharged")
-        activate AdmRepo
-        AdmRepo-->>Ctrl: statusUpdated
-        deactivate AdmRepo
+        Ctrl->>AdmEntity: updateStatus(admissionId, "Discharged")
+        activate AdmEntity
+        AdmEntity-->>Ctrl: statusUpdated
+        deactivate AdmEntity
         Ctrl-->>UI: return DischargeCompletedSuccess()
         UI-->>Receptionist: printDischargeGatePass()
     end

@@ -3,7 +3,7 @@ sequenceDiagram
     actor Tech as Lab Technician
     participant UI as LaboratoryUI
     participant Ctrl as LaboratoryController
-    participant OrderRepo as LabOrderRepository
+    participant OrderEntity as LabTestOrder
     participant SampleEntity as Sample
     participant ReportEntity as LabReport
 
@@ -11,10 +11,10 @@ sequenceDiagram
     activate UI
     UI->>Ctrl: getOrderDetailsByBarcode(barcode)
     activate Ctrl
-    Ctrl->>OrderRepo: findByBarcode(barcode)
-    activate OrderRepo
-    OrderRepo-->>Ctrl: orderObj
-    deactivate OrderRepo
+    Ctrl->>OrderEntity: findByBarcode(barcode)
+    activate OrderEntity
+    OrderEntity-->>Ctrl: orderObj
+    deactivate OrderEntity
     Ctrl-->>UI: displayTestParameters(orderObj)
     deactivate Ctrl
 
@@ -29,10 +29,10 @@ sequenceDiagram
     activate ReportEntity
     ReportEntity-->>Ctrl: reportObj
     deactivate ReportEntity
-    Ctrl->>OrderRepo: updateOrderStatus(orderId, "Approved")
-    activate OrderRepo
-    OrderRepo-->>Ctrl: orderUpdated
-    deactivate OrderRepo
+    Ctrl->>OrderEntity: updateOrderStatus(orderId, "Approved")
+    activate OrderEntity
+    OrderEntity-->>Ctrl: orderUpdated
+    deactivate OrderEntity
     Ctrl-->>UI: return ReportPublishedSuccess(reportId)
     UI-->>Tech: displayApprovalReceipt()
     deactivate Ctrl

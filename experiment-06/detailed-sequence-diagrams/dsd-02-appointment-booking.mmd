@@ -3,18 +3,17 @@ sequenceDiagram
     actor Patient as Patient
     participant UI as AppointmentUI
     participant Ctrl as AppointmentController
-    participant DocRepo as DoctorRepository
-    participant ApptRepo as AppointmentRepository
+    participant DocEntity as Doctor
     participant ApptEntity as Appointment
 
     Patient->>UI: selectDoctorAndDate(doctorId, date)
     activate UI
     UI->>Ctrl: getAvailableSlots(doctorId, date)
     activate Ctrl
-    Ctrl->>DocRepo: findDoctorSchedule(doctorId, date)
-    activate DocRepo
-    DocRepo-->>Ctrl: doctorSchedule
-    deactivate DocRepo
+    Ctrl->>DocEntity: getSchedule(date)
+    activate DocEntity
+    DocEntity-->>Ctrl: doctorSchedule
+    deactivate DocEntity
     Ctrl-->>UI: return AvailableSlotsList
     deactivate Ctrl
     UI-->>Patient: displaySlotsGrid()
@@ -22,10 +21,10 @@ sequenceDiagram
     Patient->>UI: submitBooking(patientId, doctorId, slotTime)
     UI->>Ctrl: bookAppointment(patientId, doctorId, slotTime)
     activate Ctrl
-    Ctrl->>ApptRepo: checkSlotConflict(doctorId, slotTime)
-    activate ApptRepo
-    ApptRepo-->>Ctrl: isBooked
-    deactivate ApptRepo
+    Ctrl->>ApptEntity: checkConflict(doctorId, slotTime)
+    activate ApptEntity
+    ApptEntity-->>Ctrl: isBooked
+    deactivate ApptEntity
     alt Slot Conflict Exists
         Ctrl-->>UI: return Error("Slot already booked")
         UI-->>Patient: displaySlotConflictMsg()
@@ -34,10 +33,10 @@ sequenceDiagram
         activate ApptEntity
         ApptEntity-->>Ctrl: apptInstance
         deactivate ApptEntity
-        Ctrl->>ApptRepo: save(apptInstance)
-        activate ApptRepo
-        ApptRepo-->>Ctrl: savedAppt
-        deactivate ApptRepo
+        Ctrl->>ApptEntity: save()
+        activate ApptEntity
+        ApptEntity-->>Ctrl: savedAppt
+        deactivate ApptEntity
         Ctrl-->>UI: return BookingConfirmation(apptId)
         UI-->>Patient: renderConfirmationTicket()
     end

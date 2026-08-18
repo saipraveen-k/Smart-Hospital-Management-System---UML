@@ -7,15 +7,23 @@
 
 ---
 
+> **Note on Mermaid.js UML Representation**:  
+> Because Mermaid.js does not provide a native UML Use Case Diagram syntax, the use-case model is represented using Mermaid flowchart notation (`flowchart LR`) while preserving UML actor, system-boundary, include, extend, and generalization semantics.
+
+---
+
 ## 1. Aim
-To identify system actors, model functional use cases, structure use case packages, define `<<include>>` and `<<extend>>` relationships, author formal use case specifications, and generate standard UML Use Case Diagrams for the Smart Hospital Management System (SHMS).
+To identify system actors (6 Primary Actors, 1 Supporting/Managerial Actor), model functional use cases, structure use case packages, define `<<include>>` and `<<extend>>` relationships, author formal use case specifications, and generate standard UML Use Case Diagrams for the Smart Hospital Management System (SHMS).
 
 ---
 
 ## 2. Objectives
-1. Detail actor catalogs and functional boundaries.
+1. Detail actor catalogs distinguishing 6 Primary Actors (`Patient`, `Receptionist`, `Doctor`, `Pharmacist`, `Lab Technician`, `Cashier`) and 1 Supporting / Managerial Actor (`Admin`).
 2. Formulate 35 use cases categorized across 9 subsystem packages.
-3. Model UML `<<include>>`, `<<extend>>`, and actor generalization relationships.
+3. Model semantically justified UML `<<include>>` and `<<extend>>` relationships:
+   - `Book Appointment` `<<include>>` `Select Department`, `Select Doctor`, `Check Doctor Availability`, `Generate Appointment`.
+   - `Doctor Consultation` `<<extend>>` `Request Laboratory Test`, `Recommend Inpatient Admission`.
+   - `Billing and Payment` `<<include>>` `Calculate Charges`, `Process Payment`, `Generate Receipt`.
 4. Author 12 detailed use case specifications covering primary flows, alternative flows, exception scenarios, preconditions, and postconditions.
 5. Author standard Mermaid `.mmd` diagrams for system-wide and package-level use case representations.
 
@@ -33,10 +41,10 @@ To identify system actors, model functional use cases, structure use case packag
 
 ## 4. Procedure
 1. Analyzed functional requirements (`FR-01` to `FR-30`) from Experiment 2.
-2. Mapped operational tasks for `Patient`, `Receptionist`, `Doctor`, `Lab Technician`, `Pharmacist`, `Cashier`, and `Admin`.
+2. Mapped operational tasks for `Patient`, `Receptionist`, `Doctor`, `Lab Technician`, `Pharmacist`, `Cashier` (Primary Actors) and `Admin` (Supporting / Managerial Actor).
 3. Applied UML relationship semantics:
    - `<<include>>`: Mandatory sub-processes (e.g. `Book Appointment` includes `Check Doctor Availability`).
-   - `<<extend>>`: Optional/Conditional flows (e.g. `Request Lab Test` extends `Doctor Consultation`).
+   - `<<extend>>`: Optional/Conditional flows (e.g. `Request Laboratory Test` extends `Doctor Consultation`).
 4. Authored tabular specifications detailing step-by-step main success flows and exception handling.
 
 ---

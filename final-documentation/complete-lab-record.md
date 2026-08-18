@@ -62,7 +62,7 @@ Finally, I express my appreciation to my peers for their collaborative insights 
 
 ## 1. System Overview & Problem Statement
 
-The **Smart Hospital Management System (SHMS)** is an integrated enterprise healthcare software solution designed to automate, streamline, and audit clinical, operational, and financial hospital workflows. SHMS integrates 8 core functional modules across 7 distinct human actor roles:
+The **Smart Hospital Management System (SHMS)** is an integrated enterprise healthcare software solution designed to automate, streamline, and audit clinical, operational, and financial hospital workflows. SHMS integrates 8 core functional modules across 6 Primary Actors (`Patient`, `Receptionist`, `Doctor`, `Pharmacist`, `Lab Technician`, `Cashier`) and 1 Supporting / Managerial Actor (`Admin`):
 
 1. **Patient Registration**: Demographic capture, UHID generation, profile management.
 2. **Appointment & OP Management**: Doctor schedule configuration, slot booking, OP check-in, queue token management.
@@ -105,7 +105,7 @@ Key highlights:
 
 *(Refer to [`experiment-02/README.md`](file:///c:/tempp/clg/5th%20sem/uml/Smart%20Hospital%20Management%20System%20%E2%80%94%20UML/experiment-02/README.md).)*
 
-- **Aim**: Formulate IEEE 830 compliant SRS, stakeholder analysis, 30 functional requirements (`FR-01` to `FR-30`), 11 NFRs, business rules (`BR-01` to `BR-10`), scope boundary, and Event Table.
+- **Aim**: Formulate IEEE 830 compliant SRS, stakeholder analysis (6 Primary Actors, 1 Supporting/Managerial Actor), 30 functional requirements (`FR-01` to `FR-30`), 11 NFRs, business rules (`BR-01` to `BR-10`), scope boundary, and Event Table.
 - **Deliverables**:
   - `SRS.md`, `stakeholders.md`, `functional-requirements.md`, `non-functional-requirements.md`, `business-rules.md`, `scope.md`, `event-list.md`, `event-table.md`.
 
@@ -115,6 +115,7 @@ Key highlights:
 
 *(Refer to [`experiment-03/README.md`](file:///c:/tempp/clg/5th%20sem/uml/Smart%20Hospital%20Management%20System%20%E2%80%94%20UML/experiment-03/README.md).)*
 
+- **Note on Mermaid.js Representation**: Because Mermaid.js does not provide a native UML Use Case Diagram syntax, the use-case model is represented using Mermaid flowchart notation (`flowchart LR`) while preserving UML actor, system-boundary, include, extend, and generalization semantics.
 - **Aim**: Model system use cases, define actor relationships, structure 9 subsystem packages, and author 12 detailed use case specifications.
 - **Deliverables**:
   - `actors.md`, `use-cases.md`, `use-case-packages.md`, `use-case-specifications.md`, `use-case-diagram.mmd`, `use-case-package-diagrams.mmd`.
@@ -146,7 +147,7 @@ Key highlights:
 
 *(Refer to [`experiment-06/README.md`](file:///c:/tempp/clg/5th%20sem/uml/Smart%20Hospital%20Management%20System%20%E2%80%94%20UML/experiment-06/README.md).)*
 
-- **Aim**: Construct detailed BCE sequence diagrams with activation lifelines and `alt`/`opt` frames, author numbered UML Communication Diagrams, and model the 3-Layer BCE Architecture.
+- **Aim**: Construct detailed BCE sequence diagrams with activation lifelines (`Actor` -> `UI` -> `Controller` -> `Entity`), author numbered UML Communication Diagrams, and model the 3-Layer BCE Architecture.
 - **Deliverables**:
   - 8 Detailed Sequence Diagrams (`detailed-sequence-diagrams/`)
   - 8 Numbered Communication Diagrams (`communication-diagrams/`)
@@ -184,7 +185,7 @@ Key highlights:
 
 ## 12. Master Diagram Index
 
-*(Refer to [`diagram-index.md`](file:///c:/tempp/clg/5th%20sem/uml/Smart%20Hospital%20Management%20System%20%E2%80%94%20UML/final-documentation/diagram-index.md) for catalog of all 50+ Mermaid diagrams.)*
+*(Refer to [`diagram-index.md`](file:///c:/tempp/clg/5th%20sem/uml/Smart%20Hospital%20Management%20System%20%E2%80%94%20UML/final-documentation/diagram-index.md) for catalog of all 53 Mermaid diagrams.)*
 
 ---
 
@@ -194,8 +195,8 @@ Key highlights:
 The Object-Oriented Analysis and Design (OOAD) laboratory project for the **Smart Hospital Management System (SHMS)** has been successfully completed. The system requirements were systematically analyzed, engineered into an IEEE 830 SRS, and transformed across 8 curriculum experiments into formal UML 2.5 diagrams. Complete forward and backward traceability across requirements, use cases, domain entities, BCE sequence interactions, design class structures, and state machine lifecycles has been achieved.
 
 ### Future Scope
-1. **Microservices Decomposition**: Transforming the monolithic 3-Layer BCE architecture into decoupled microservices communicating via asynchronous message brokers (e.g. Kafka/RabbitMQ).
-2. **AI-Driven Clinical Decision Support**: Integrating machine learning diagnostic recommendation models into the `ConsultationController`.
+1. **Microservices Decomposition**: Transforming the monolithic 3-Layer BCE architecture into decoupled microservices communicating via asynchronous message brokers.
+2. **AI-Driven Clinical Decision Support**: Integrating machine learning diagnostic recommendation models into `ConsultationController`.
 3. **HL7 / FHIR Integration**: Supporting standardized HL7 FHIR electronic health record data exchange formats with external health networks.
 
 ---

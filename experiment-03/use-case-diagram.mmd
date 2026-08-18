@@ -1,60 +1,68 @@
 flowchart LR
+    %% Note: Because Mermaid.js does not provide a native UML Use Case Diagram syntax, 
+    %% the use-case model is represented using Mermaid flowchart notation while 
+    %% preserving UML actor, system-boundary, include, extend, and generalization semantics.
+
     subgraph SystemBoundary ["Smart Hospital Management System (SHMS)"]
         %% Patient Use Cases
-        UC1(["UC-01: Register Patient"])
-        UC2(["UC-02: Update Profile"])
-        UC3(["UC-03: Book Appointment"])
-        UC6(["UC-06: View Medical Reports"])
-        UC8(["UC-08: Pay Bill Online"])
+        UC1(["Register Patient"])
+        UC2(["Update Profile"])
+        UC3(["Book Appointment"])
+        UC6(["View Medical Reports"])
+        UC8(["Pay Bill Online"])
 
-        %% Sub-use cases (Includes)
-        UC3a(["Select Doctor & Slot"])
-        UC3b(["Check Doctor Availability"])
-        UC3c(["Generate Appointment"])
-        
+        %% Book Appointment Includes
+        UC3a(["Select Department"])
+        UC3b(["Select Doctor"])
+        UC3c(["Check Doctor Availability"])
+        UC3d(["Generate Appointment"])
+
         %% Receptionist Use Cases
-        UC14(["UC-14: Check In Patient"])
-        UC16(["UC-16: Create Admission"])
-        UC17(["UC-17: Allocate Bed"])
-        UC18(["UC-18: Process Discharge"])
+        UC14(["OP Check-In"])
+        UC16(["Create Admission"])
+        UC17(["Allocate Bed"])
+        UC18(["Discharge Patient"])
 
         %% Doctor Use Cases
-        UC19(["UC-19: View Patient Record"])
-        UC20(["UC-20: Consult Patient"])
-        UC21(["UC-21: Record Diagnosis"])
-        UC22(["UC-22: Create Prescription"])
-        UC23(["UC-23: Request Lab Test"])
-        UC25(["UC-25: Recommend Admission"])
-        UC27(["UC-27: Prepare Discharge Summary"])
+        UC19(["View Patient Record"])
+        UC20(["Doctor Consultation"])
+        UC21(["Record Diagnosis"])
+        UC22(["Create Prescription"])
+        UC23(["Request Laboratory Test"])
+        UC25(["Recommend Inpatient Admission"])
+        UC27(["Prepare Discharge Summary"])
 
         %% Lab Tech Use Cases
-        UC28(["UC-28: Receive Lab Test Request"])
-        UC29(["UC-29: Collect Specimen Sample"])
-        UC30(["UC-30: Process Test"])
-        UC31(["UC-31: Enter Result & Upload Report"])
+        UC28(["Receive Lab Test Request"])
+        UC29(["Collect Specimen Sample"])
+        UC30(["Process Laboratory Test"])
+        UC31(["Enter Result & Upload Report"])
 
         %% Pharmacist Use Cases
-        UC32(["UC-32: Verify Prescription & Dispense Medicine"])
+        UC32(["Dispense Medicine"])
         UC32a(["Low Stock Alert"])
 
         %% Cashier Use Cases
-        UC33(["UC-33: Generate Bill & Process Payment"])
+        UC33(["Billing and Payment"])
         UC33a(["Calculate Charges"])
-        UC33b(["Generate Receipt"])
+        UC33b(["Process Payment"])
+        UC33c(["Generate Receipt"])
 
         %% Admin Use Cases
-        UC34(["UC-34: Manage Users & Roles"])
-        UC35(["UC-35: View Audit Logs"])
+        UC34(["Manage Users & Roles"])
+        UC35(["View Security Audit Logs"])
     end
 
-    %% Actors
-    Patient[":Patient:"]
-    Receptionist[":Receptionist:"]
-    Doctor[":Doctor:"]
-    LabTech[":Lab Technician:"]
-    Pharmacist[":Pharmacist:"]
-    Cashier[":Cashier:"]
-    Admin[":Admin:"]
+    %% Primary Actors
+    Patient["Patient (Primary)"]
+    Receptionist["Receptionist (Primary)"]
+    Doctor["Doctor (Primary)"]
+    LabTech["Lab Technician (Primary)"]
+    Pharmacist["Pharmacist (Primary)"]
+    Cashier["Cashier (Primary)"]
+
+    %% Supporting / Managerial Actor
+    Admin["Admin (Supporting/Managerial)"]
 
     %% Actor Connections
     Patient --> UC1
@@ -86,19 +94,21 @@ flowchart LR
     Admin --> UC34
     Admin --> UC35
 
-    %% Relationships (Include & Extend)
-    UC3 -. "<<include>>" .-> UC3a
-    UC3a -. "<<include>>" .-> UC3b
-    UC3 -. "<<include>>" .-> UC3c
+    %% Include Relationships (Dashed)
+    UC3 -.->|"<<include>>"| UC3a
+    UC3 -.->|"<<include>>"| UC3b
+    UC3 -.->|"<<include>>"| UC3c
+    UC3 -.->|"<<include>>"| UC3d
 
-    UC20 -. "<<include>>" .-> UC19
-    UC20 -. "<<include>>" .-> UC21
-    UC20 -. "<<include>>" .-> UC22
+    UC20 -.->|"<<include>>"| UC19
+    UC20 -.->|"<<include>>"| UC21
+    UC20 -.->|"<<include>>"| UC22
 
-    UC23 -. "<<extend>>" .-> UC20
-    UC25 -. "<<extend>>" .-> UC20
+    UC33 -.->|"<<include>>"| UC33a
+    UC33 -.->|"<<include>>"| UC33b
+    UC33 -.->|"<<include>>"| UC33c
 
-    UC32a -. "<<extend>>" .-> UC32
-
-    UC33 -. "<<include>>" .-> UC33a
-    UC33 -. "<<include>>" .-> UC33b
+    %% Extend Relationships (Dashed)
+    UC23 -.->|"<<extend>>"| UC20
+    UC25 -.->|"<<extend>>"| UC20
+    UC32a -.->|"<<extend>>"| UC32

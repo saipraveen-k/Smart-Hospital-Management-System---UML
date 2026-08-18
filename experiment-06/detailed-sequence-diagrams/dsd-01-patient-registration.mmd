@@ -3,7 +3,6 @@ sequenceDiagram
     actor Receptionist as Receptionist
     participant UI as PatientRegistrationUI
     participant Ctrl as PatientRegistrationController
-    participant Repo as PatientRepository
     participant Entity as Patient
 
     Receptionist->>UI: submitForm(patientDto)
@@ -15,10 +14,7 @@ sequenceDiagram
         Ctrl-->>UI: return ValidationError("Invalid Phone/Email")
         UI-->>Receptionist: displayFieldErrorMsg()
     else Validation Passed
-        Ctrl->>Repo: findByPhone(patientDto.phone)
-        activate Repo
-        Repo-->>Ctrl: existingPatient
-        deactivate Repo
+        Ctrl->>Ctrl: checkDuplicatePatient(patientDto.phone)
         alt Duplicate Patient Found
             Ctrl-->>UI: return Error("Patient already exists")
             UI-->>Receptionist: displayDuplicateAlert()
@@ -28,10 +24,10 @@ sequenceDiagram
             activate Entity
             Entity-->>Ctrl: patientObj
             deactivate Entity
-            Ctrl->>Repo: save(patientObj)
-            activate Repo
-            Repo-->>Ctrl: savedPatient
-            deactivate Repo
+            Ctrl->>Entity: save()
+            activate Entity
+            Entity-->>Ctrl: savedPatient
+            deactivate Entity
             Ctrl-->>UI: return Success(UHID)
             UI-->>Receptionist: displayRegistrationConfirmation(UHID)
         end

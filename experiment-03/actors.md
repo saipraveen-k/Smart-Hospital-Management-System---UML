@@ -1,10 +1,10 @@
 # System Actor Catalog — SHMS
 
-This document lists and describes all primary and supporting actors involved in SHMS.
+This document lists and describes all primary actors and supporting/managerial actors involved in SHMS.
 
 ---
 
-## 1. Actor Taxonomy
+## 1. Actor Classification Taxonomy
 
 ```text
                                      User (Abstract)
@@ -12,13 +12,18 @@ This document lists and describes all primary and supporting actors involved in 
      ┌───────────┬───────────┬──────────┼───────────┬───────────┬───────────┐
      ▼           ▼           ▼          ▼           ▼           ▼           ▼
   Patient   Receptionist   Doctor   Pharmacist   LabTech     Cashier      Admin
+  (Primary)  (Primary)   (Primary)  (Primary)   (Primary)   (Primary)  (Supporting/
+                                                                        Managerial)
 ```
 
 ---
 
-## 2. Actor Profiles
+## 2. Primary Actors
 
-### 2.1 Patient (Primary Actor)
+Primary actors directly participate in core clinical, administrative, and operational hospital workflows.
+
+### 2.1 Patient
+* **Classification**: Primary Actor
 * **Description**: Healthcare receiver accessing SHMS via patient portal or mobile terminal.
 * **Responsibilities**:
   - Provide personal demographic and medical history details.
@@ -27,7 +32,8 @@ This document lists and describes all primary and supporting actors involved in 
   - Access digital medical records, prescriptions, and lab test reports.
   - Settle medical bills and download official receipts.
 
-### 2.2 Receptionist (Primary Actor)
+### 2.2 Receptionist
+* **Classification**: Primary Actor
 * **Description**: Front-desk hospital staff managing patient intake and bed allocation.
 * **Responsibilities**:
   - Register walk-in patients and update demographic profiles.
@@ -36,8 +42,9 @@ This document lists and describes all primary and supporting actors involved in 
   - Process inpatient admission requests and allocate ward beds.
   - Finalize discharge paperwork upon bill clearance.
 
-### 2.3 Doctor (Primary Actor)
-* **Description**: Licensed medical practitioner conducting patient consultations and managing care plans.
+### 2.3 Doctor
+* **Classification**: Primary Actor
+* **Description**: Licensed medical practitioner conducting Doctor Consultations and managing care plans.
 * **Responsibilities**:
   - Review patient medical history and previous consultation notes.
   - Conduct physical examinations and record clinical diagnoses.
@@ -45,7 +52,8 @@ This document lists and describes all primary and supporting actors involved in 
   - Order diagnostic laboratory tests and review uploaded lab reports.
   - Manage inpatient treatment plans and approve discharge summaries.
 
-### 2.4 Pharmacist (Supporting Actor)
+### 2.4 Pharmacist
+* **Classification**: Primary Actor
 * **Description**: Certified pharmacy staff managing drug dispensing and inventory counts.
 * **Responsibilities**:
   - Search and verify doctor prescriptions.
@@ -53,7 +61,8 @@ This document lists and describes all primary and supporting actors involved in 
   - Dispense prescribed medications and log pharmacy charges.
   - Update stock quantities and manage inventory alerts.
 
-### 2.5 Lab Technician (Supporting Actor)
+### 2.5 Lab Technician
+* **Classification**: Primary Actor
 * **Description**: Diagnostic laboratory processing technician.
 * **Responsibilities**:
   - Receive diagnostic test orders.
@@ -61,7 +70,8 @@ This document lists and describes all primary and supporting actors involved in 
   - Perform lab testing procedures and record raw values.
   - Enter test results, upload digital PDF reports, and approve release.
 
-### 2.6 Cashier (Supporting Actor)
+### 2.6 Cashier
+* **Classification**: Primary Actor
 * **Description**: Hospital financial settlement staff.
 * **Responsibilities**:
   - Compile itemized bills across departments.
@@ -69,8 +79,13 @@ This document lists and describes all primary and supporting actors involved in 
   - Process payments via Cash, Card, or UPI online gateway.
   - Issue official payment receipts.
 
-### 2.7 Admin (Managerial Actor)
-* **Description**: System Administrator and Security Manager.
+---
+
+## 3. Supporting / Managerial Actor
+
+### 3.1 Admin
+* **Classification**: Supporting / Managerial Actor
+* **Description**: System Administrator and Security Manager overseeing system governance, RBAC access control, and platform infrastructure.
 * **Responsibilities**:
   - Manage user accounts (create, edit, suspend, reset).
   - Configure Role-Based Access Control (RBAC) privileges.
