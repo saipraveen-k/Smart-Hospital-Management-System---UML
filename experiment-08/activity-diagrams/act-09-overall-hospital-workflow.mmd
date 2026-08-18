@@ -1,0 +1,57 @@
+flowchart TD
+    subgraph Patient_Swimlane ["Patient"]
+        P_Start([Start]) --> P_Reg[Provide Demographic Details]
+        P_Book[Book Appointment Slot] --> P_Arrival[Arrive at Hospital Reception]
+        P_Receipt[Receive Receipts & Discharge Pass] --> P_End([End])
+    end
+
+    subgraph Receptionist_Swimlane ["Receptionist"]
+        R_Reg[Register Patient & Issue UHID] --> R_CheckIn[Perform OP Check-In & Issue Token]
+        R_Bed[Allocate Bed & Process Admission] --> R_Discharge[Approve Discharge & Release Bed]
+    end
+
+    subgraph Doctor_Swimlane ["Doctor"]
+        D_Consult[Conduct Consultation & Record Diagnosis]
+        D_LabDecision{Laboratory Test Required?}
+        D_AdmDecision{Admission Required?}
+        D_Rx[Issue Electronic Prescription]
+        D_DischargeSummary[Prepare & Sign Discharge Summary]
+    end
+
+    subgraph Lab_Swimlane ["Lab Technician"]
+        L_Sample[Collect Specimen & Barcode]
+        L_Process[Process Test & Upload Approved Report]
+    end
+
+    subgraph Pharmacy_Swimlane ["Pharmacist"]
+        Ph_Dispense[Verify Prescription & Dispense Meds]
+    end
+
+    subgraph Cashier_Swimlane ["Cashier"]
+        C_Bill[Consolidate Charges & Process Payment]
+    end
+
+    %% Cross-Swimlane Connections
+    P_Reg --> R_Reg
+    R_Reg --> P_Book
+    P_Arrival --> R_CheckIn
+    R_CheckIn --> D_Consult
+    D_Consult --> D_LabDecision
+
+    %% Lab Decision Fork
+    D_LabDecision -- YES --> L_Sample
+    L_Sample --> L_Process
+    L_Process --> D_Consult
+    D_LabDecision -- NO --> D_AdmDecision
+
+    %% Admission Decision Fork
+    D_AdmDecision -- YES --> R_Bed
+    R_Bed --> D_DischargeSummary
+    D_DischargeSummary --> R_Discharge
+    R_Discharge --> C_Bill
+    D_AdmDecision -- NO --> D_Rx
+
+    D_Rx --> Ph_Dispense
+    Ph_Dispense --> C_Bill
+    C_Bill --> P_Receipt
+    P_Receipt --> P_End

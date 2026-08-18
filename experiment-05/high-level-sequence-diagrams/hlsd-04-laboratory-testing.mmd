@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor Tech as Lab Technician
+    participant LabCtrl as LaboratoryController
+    participant LabOrderRepo as LabOrderRepository
+    participant SampleEntity as Sample
+    participant ReportEntity as LabReport
+
+    Tech->>LabCtrl: processSampleAndReport(orderId, resultsDto)
+    activate LabCtrl
+    LabCtrl->>LabOrderRepo: findById(orderId)
+    activate LabOrderRepo
+    LabOrderRepo-->>LabCtrl: orderObj
+    deactivate LabOrderRepo
+    LabCtrl->>SampleEntity: updateSampleStatus("Processed")
+    activate SampleEntity
+    SampleEntity-->>LabCtrl: sampleUpdated
+    deactivate SampleEntity
+    LabCtrl->>ReportEntity: generateApprovedReport(resultsDto)
+    activate ReportEntity
+    ReportEntity-->>LabCtrl: reportObj
+    deactivate ReportEntity
+    LabCtrl->>LabOrderRepo: updateStatus("Approved")
+    activate LabOrderRepo
+    LabOrderRepo-->>LabCtrl: orderUpdated
+    deactivate LabOrderRepo
+    LabCtrl-->>Tech: reportPublishedSuccess(reportId)
+    deactivate LabCtrl

@@ -1,0 +1,21 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Laboratory Testing (EXP6-COM-04)
+
+    Actor[":LabTechnician"]
+    UI[":LaboratoryUI"]
+    Ctrl[":LaboratoryController"]
+    OrderRepo[":LabOrderRepository"]
+    SampleEntity[":Sample"]
+    ReportEntity[":LabReport"]
+
+    Actor -- "1: scanBarcode(barcode)" --> UI
+    UI -- "1.1: getOrderDetails(barcode)" --> Ctrl
+    Ctrl -- "1.2: findByBarcode(barcode)" --> OrderRepo
+    Actor -- "2: submitTestResults(orderId, values, pdf)" --> UI
+    UI -- "2.1: processResults(orderId, values, pdf)" --> Ctrl
+    Ctrl -- "2.2: markProcessed()" --> SampleEntity
+    Ctrl -- "2.3: createReport(values, Approved)" --> ReportEntity
+    Ctrl -- "2.4: updateOrderStatus(Approved)" --> OrderRepo
+    Ctrl -- "2.5: returnReportPublished(reportId)" --> UI
+    UI -- "2.6: displayApprovalReceipt()" --> Actor

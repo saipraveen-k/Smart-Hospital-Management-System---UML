@@ -1,0 +1,21 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Billing and Payment (EXP6-COM-07)
+
+    Actor[":Cashier"]
+    UI[":BillingUI"]
+    Ctrl[":BillingController"]
+    BillRepo[":BillRepository"]
+    Gateway[":PaymentGatewayAdapter"]
+    ReceiptEntity[":Receipt"]
+
+    Actor -- "1: generateFinalBill(patientId)" --> UI
+    UI -- "1.1: calculateBill(patientId)" --> Ctrl
+    Ctrl -- "1.2: fetchUnbilledItems(patientId)" --> BillRepo
+    Actor -- "2: processPayment(billId, amount, Card)" --> UI
+    UI -- "2.1: executePayment(billId, amount, mode)" --> Ctrl
+    Ctrl -- "2.2: authorizeTransaction(amount)" --> Gateway
+    Ctrl -- "2.3: updateStatus(billId, Paid)" --> BillRepo
+    Ctrl -- "2.4: generateReceipt(billId, txnRef)" --> ReceiptEntity
+    Ctrl -- "2.5: returnPaymentSuccess(receiptObj)" --> UI
+    UI -- "2.6: printOfficialReceipt()" --> Actor

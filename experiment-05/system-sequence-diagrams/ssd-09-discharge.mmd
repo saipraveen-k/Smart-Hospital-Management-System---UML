@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist / Doctor
+    participant System as Smart Hospital System (SHMS)
+
+    Doctor->>System: submitDischargeSummary(admissionId, summaryNotes)
+    activate System
+    System-->>Doctor: dischargeSummarySaved(summaryId)
+    deactivate System
+
+    Receptionist->>System: finalizeDischarge(admissionId)
+    activate System
+    System->>System: verifyBillStatusPaid()
+    System->>System: releaseAllocatedBed()
+    System->>System: updateAdmissionStatusToDischarged()
+    System-->>Receptionist: dischargeCompleted(status="Discharged", bedReleased=true)
+    deactivate System

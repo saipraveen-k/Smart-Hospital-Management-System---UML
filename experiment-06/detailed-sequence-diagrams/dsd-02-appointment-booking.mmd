@@ -1,0 +1,45 @@
+sequenceDiagram
+    autonumber
+    actor Patient as Patient
+    participant UI as AppointmentUI
+    participant Ctrl as AppointmentController
+    participant DocRepo as DoctorRepository
+    participant ApptRepo as AppointmentRepository
+    participant ApptEntity as Appointment
+
+    Patient->>UI: selectDoctorAndDate(doctorId, date)
+    activate UI
+    UI->>Ctrl: getAvailableSlots(doctorId, date)
+    activate Ctrl
+    Ctrl->>DocRepo: findDoctorSchedule(doctorId, date)
+    activate DocRepo
+    DocRepo-->>Ctrl: doctorSchedule
+    deactivate DocRepo
+    Ctrl-->>UI: return AvailableSlotsList
+    deactivate Ctrl
+    UI-->>Patient: displaySlotsGrid()
+
+    Patient->>UI: submitBooking(patientId, doctorId, slotTime)
+    UI->>Ctrl: bookAppointment(patientId, doctorId, slotTime)
+    activate Ctrl
+    Ctrl->>ApptRepo: checkSlotConflict(doctorId, slotTime)
+    activate ApptRepo
+    ApptRepo-->>Ctrl: isBooked
+    deactivate ApptRepo
+    alt Slot Conflict Exists
+        Ctrl-->>UI: return Error("Slot already booked")
+        UI-->>Patient: displaySlotConflictMsg()
+    else Slot Available
+        Ctrl->>ApptEntity: create(patientId, doctorId, slotTime, status="Confirmed")
+        activate ApptEntity
+        ApptEntity-->>Ctrl: apptInstance
+        deactivate ApptEntity
+        Ctrl->>ApptRepo: save(apptInstance)
+        activate ApptRepo
+        ApptRepo-->>Ctrl: savedAppt
+        deactivate ApptRepo
+        Ctrl-->>UI: return BookingConfirmation(apptId)
+        UI-->>Patient: renderConfirmationTicket()
+    end
+    deactivate Ctrl
+    deactivate UI

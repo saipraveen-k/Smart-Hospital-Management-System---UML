@@ -1,0 +1,19 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Inpatient Discharge (EXP6-COM-08)
+
+    Actor[":Receptionist"]
+    UI[":AdmissionUI"]
+    Ctrl[":AdmissionController"]
+    BillRepo[":BillRepository"]
+    AdmRepo[":AdmissionRepository"]
+    BedEntity[":Bed"]
+
+    Actor -- "1: finalizeDischarge(admissionId)" --> UI
+    UI -- "1.1: executeDischarge(admissionId)" --> Ctrl
+    Ctrl -- "1.2: getBillStatus(admissionId)" --> BillRepo
+    Ctrl -- "1.3: getAdmissionBedId(admissionId)" --> AdmRepo
+    Ctrl -- "1.4: updateStatus(bedId, Available)" --> BedEntity
+    Ctrl -- "1.5: updateStatus(admissionId, Discharged)" --> AdmRepo
+    Ctrl -- "1.6: returnDischargeSuccess()" --> UI
+    UI -- "1.7: printDischargeGatePass()" --> Actor

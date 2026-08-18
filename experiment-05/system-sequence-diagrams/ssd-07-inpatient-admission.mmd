@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist
+    participant System as Smart Hospital System (SHMS)
+
+    Receptionist->>System: fetchPendingAdmissionRequests()
+    activate System
+    System-->>Receptionist: displayAdmissionRequests(admissionList)
+    deactivate System
+
+    Receptionist->>System: allocateBedAndAdmit(admissionId, wardId, bedId)
+    activate System
+    System->>System: verifyBedAvailability()
+    System->>System: updateBedStatusToOccupied()
+    System->>System: activateIPAdmission()
+    System-->>Receptionist: bedAllocatedSuccess(admissionId, bedId, status="Admitted")
+    deactivate System

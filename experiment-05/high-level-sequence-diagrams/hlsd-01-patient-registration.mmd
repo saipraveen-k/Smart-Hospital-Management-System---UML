@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist
+    participant RegCtrl as PatientRegistrationController
+    participant PatRepo as PatientRepository
+    participant PatEntity as Patient
+
+    Receptionist->>RegCtrl: registerPatient(dto)
+    activate RegCtrl
+    RegCtrl->>RegCtrl: validateInput(dto)
+    RegCtrl->>PatRepo: findByPhone(dto.phone)
+    activate PatRepo
+    PatRepo-->>RegCtrl: null (No Duplicate)
+    deactivate PatRepo
+    RegCtrl->>PatEntity: new Patient(dto)
+    activate PatEntity
+    PatEntity-->>RegCtrl: patientInstance
+    deactivate PatEntity
+    RegCtrl->>PatRepo: save(patientInstance)
+    activate PatRepo
+    PatRepo-->>RegCtrl: savedPatient
+    deactivate PatRepo
+    RegCtrl-->>Receptionist: registrationResponse(UHID)
+    deactivate RegCtrl

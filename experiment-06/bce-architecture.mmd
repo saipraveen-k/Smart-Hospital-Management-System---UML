@@ -1,0 +1,61 @@
+flowchart LR
+    subgraph Layer1 ["Layer 1: Boundary (UI & Adapters)"]
+        UI_Reg["PatientRegistrationUI"]
+        UI_Appt["AppointmentUI"]
+        UI_Consult["ConsultationUI"]
+        UI_Lab["LaboratoryUI"]
+        UI_Pharm["PharmacyUI"]
+        UI_Adm["AdmissionUI"]
+        UI_Bill["BillingUI"]
+        UI_Admin["AdminPortalUI"]
+        Adapter_Payment["PaymentGatewayAdapter"]
+    end
+
+    subgraph Layer2 ["Layer 2: Control (Workflow Logic)"]
+        Ctrl_Reg["PatientRegistrationController"]
+        Ctrl_Appt["AppointmentController"]
+        Ctrl_Consult["ConsultationController"]
+        Ctrl_Lab["LaboratoryController"]
+        Ctrl_Pharm["PharmacyController"]
+        Ctrl_Adm["AdmissionController"]
+        Ctrl_Bill["BillingController"]
+        Ctrl_Report["ReportController"]
+        Ctrl_Sec["SecurityController"]
+    end
+
+    subgraph Layer3 ["Layer 3: Entity (Domain State)"]
+        E_User["User / Patient / Doctor"]
+        E_Appt["Appointment / Queue"]
+        E_Consult["Consultation / EHR"]
+        E_Rx["Prescription / Medicine"]
+        E_Lab["LabTestOrder / Report"]
+        E_Adm["Admission / Ward / Bed"]
+        E_Bill["Bill / Payment / Receipt"]
+        E_Audit["AuditLog / Role"]
+    end
+
+    %% Boundary -> Control
+    UI_Reg --> Ctrl_Reg
+    UI_Appt --> Ctrl_Appt
+    UI_Consult --> Ctrl_Consult
+    UI_Lab --> Ctrl_Lab
+    UI_Pharm --> Ctrl_Pharm
+    UI_Adm --> Ctrl_Adm
+    UI_Bill --> Ctrl_Bill
+    UI_Bill --> Adapter_Payment
+    UI_Admin --> Ctrl_Sec
+    UI_Admin --> Ctrl_Report
+
+    %% Control -> Entity
+    Ctrl_Reg --> E_User
+    Ctrl_Appt --> E_Appt
+    Ctrl_Consult --> E_Consult
+    Ctrl_Consult --> E_Rx
+    Ctrl_Consult --> E_Lab
+    Ctrl_Lab --> E_Lab
+    Ctrl_Pharm --> E_Rx
+    Ctrl_Pharm --> E_Bill
+    Ctrl_Adm --> E_Adm
+    Ctrl_Bill --> E_Bill
+    Ctrl_Sec --> E_Audit
+    Ctrl_Sec --> E_User

@@ -1,0 +1,55 @@
+flowchart TD
+    subgraph Package_Architecture ["SHMS Use Case Subsystem Packaging"]
+        subgraph P1 ["Patient Management"]
+            UC01(["UC-01: Register Patient"])
+            UC02(["UC-02: Update Profile"])
+            UC11(["UC-11: Register Walk-In Patient"])
+        end
+
+        subgraph P2 ["Appointment & OP Management"]
+            UC03(["UC-03: Book Appointment"])
+            UC06(["UC-06: OP Check-In"])
+            UC15(["UC-15: Manage Queue Tokens"])
+        end
+
+        subgraph P3 ["Clinical Management"]
+            UC20(["UC-20: Conduct Consultation"])
+            UC21(["UC-21: Record Diagnosis"])
+            UC22(["UC-22: Create Prescription"])
+        end
+
+        subgraph P4 ["Laboratory Package"]
+            UC23(["UC-23: Request Lab Test"])
+            UC29(["UC-29: Collect Specimen"])
+            UC31(["UC-31: Upload Lab Report"])
+        end
+
+        subgraph P5 ["Inpatient Management"]
+            UC16(["UC-16: Create Admission"])
+            UC17(["UC-17: Allocate Bed"])
+            UC18(["UC-18: Process Discharge"])
+        end
+
+        subgraph P6 ["Pharmacy Package"]
+            UC32(["UC-32: Dispense Medicine"])
+        end
+
+        subgraph P7 ["Billing & Payment Package"]
+            UC33(["UC-33: Generate Bill & Payment"])
+        end
+
+        subgraph P8 ["Security & Admin Package"]
+            UC34(["UC-34: Manage Users & Roles"])
+            UC35(["UC-35: View Audit Logs"])
+        end
+    end
+
+    P1 ..> P2 : import
+    P2 ..> P3 : import
+    P3 ..> P4 : dependency
+    P3 ..> P5 : dependency
+    P3 ..> P6 : dependency
+    P4 ..> P7 : charge logging
+    P5 ..> P7 : charge logging
+    P6 ..> P7 : charge logging
+    P8 ..> P1 : access control

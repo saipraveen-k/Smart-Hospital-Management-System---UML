@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> Requested : bookAppointmentSlot()
+    Requested --> Confirmed : confirmBooking()
+    Requested --> Cancelled : cancelRequest()
+
+    Confirmed --> CheckedIn : checkInArrival() [date == today]
+    Confirmed --> Cancelled : cancelAppointment()
+    Confirmed --> NoShow : timeExpired() [time > 23:59]
+
+    CheckedIn --> InConsultation : callToken()
+    InConsultation --> Completed : completeConsultation()
+
+    Completed --> [*]
+    Cancelled --> [*]
+    NoShow --> [*]

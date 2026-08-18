@@ -1,0 +1,251 @@
+classDiagram
+    class User {
+        <<Abstract>>
+        -String userId
+        -String username
+        -String passwordHash
+        -String name
+        -String email
+        -String phone
+        -String role
+        -boolean isActive
+    }
+
+    class Patient {
+        -String patientId
+        -String dob
+        -String gender
+        -String address
+        -String emergencyContact
+        -String bloodGroup
+    }
+
+    class Doctor {
+        -String doctorId
+        -String specialization
+        -String qualification
+        -double consultationFee
+        -String roomNumber
+        -int maxDailyQuota
+    }
+
+    class Receptionist {
+        -String receptionistId
+        -String deskLocation
+    }
+
+    class Pharmacist {
+        -String pharmacistId
+        -String licenseNumber
+    }
+
+    class LabTechnician {
+        -String technicianId
+        -String labSection
+    }
+
+    class Cashier {
+        -String cashierId
+        -String counterNumber
+    }
+
+    class Admin {
+        -String adminId
+        -String accessLevel
+    }
+
+    class Department {
+        -String deptId
+        -String deptName
+        -String deptCode
+    }
+
+    class Hospital {
+        -String hospitalName
+        -String registrationNo
+        -String address
+    }
+
+    class Appointment {
+        -String appointmentId
+        -String appointmentDate
+        -String timeSlot
+        -String status
+        -int queueToken
+    }
+
+    class MedicalRecord {
+        -String recordId
+        -String creationDate
+        -String allergies
+        -String chronicConditions
+    }
+
+    class Consultation {
+        -String consultationId
+        -String consultationDate
+        -String chiefComplaints
+        -String examinationNotes
+        -String advice
+    }
+
+    class Diagnosis {
+        -String diagnosisId
+        -String icdCode
+        -String description
+        -String severity
+    }
+
+    class Prescription {
+        -String prescriptionId
+        -String issueDate
+        -String status
+        -String doctorSignature
+    }
+
+    class PrescriptionItem {
+        -String itemId
+        -String medicineName
+        -String dosage
+        -String frequency
+        -int durationDays
+        -int quantity
+    }
+
+    class Medicine {
+        -String medicineId
+        -String name
+        -String genericName
+        -double unitPrice
+    }
+
+    class InventoryItem {
+        -String inventoryId
+        -String batchNumber
+        -String expiryDate
+        -int stockQuantity
+        -int reorderLevel
+    }
+
+    class LabTest {
+        -String testId
+        -String testName
+        -String testCode
+        -double cost
+    }
+
+    class LabTestOrder {
+        -String orderId
+        -String orderDate
+        -String urgency
+        -String status
+    }
+
+    class Sample {
+        -String sampleId
+        -String barcode
+        -String sampleType
+        -String collectionTimestamp
+    }
+
+    class LabReport {
+        -String reportId
+        -String reportDate
+        -String measuredValues
+        -String approvalStatus
+    }
+
+    class Admission {
+        -String admissionId
+        -String admissionDate
+        -String dischargeDate
+        -String status
+        -String admittingDiagnosis
+    }
+
+    class Ward {
+        -String wardId
+        -String wardName
+        -String wardType
+        -int totalBeds
+        -double dailyRate
+    }
+
+    class Bed {
+        -String bedId
+        -String bedNumber
+        -String status
+    }
+
+    class TreatmentPlan {
+        -String planId
+        -String logDate
+        -String progressNotes
+        -String vitalsRecord
+    }
+
+    class Bill {
+        -String billId
+        -String billDate
+        -double grossAmount
+        -double discountAmount
+        -double netAmount
+        -String status
+    }
+
+    class BillItem {
+        -String billItemId
+        -String serviceDescription
+        -double unitPrice
+        -int quantity
+        -double subTotal
+    }
+
+    class Payment {
+        -String paymentId
+        -String paymentDate
+        -double amountPaid
+        -String paymentMode
+        -String transactionRef
+    }
+
+    class Receipt {
+        -String receiptId
+        -String receiptDate
+        -double amountReceived
+    }
+
+    %% Inheritance Relationships
+    User <|-- Patient
+    User <|-- Doctor
+    User <|-- Receptionist
+    User <|-- Pharmacist
+    User <|-- LabTechnician
+    User <|-- Cashier
+    User <|-- Admin
+
+    %% Structural Relationships
+    Hospital "1" *-- "1..*" Department : contains
+    Department "1" o-- "0..*" Doctor : employs
+    Patient "1" -- "1" MedicalRecord : owns
+    Patient "1" -- "0..*" Appointment : books
+    Doctor "1" -- "0..*" Appointment : conducts
+    Appointment "1" -- "0..1" Consultation : results in
+    MedicalRecord "1" o-- "0..*" Consultation : aggregates
+    Consultation "1" -- "1..*" Diagnosis : records
+    Consultation "1" *-- "0..1" Prescription : generates
+    Prescription "1" *-- "1..*" PrescriptionItem : contains
+    PrescriptionItem "*" -- "1" Medicine : references
+    Medicine "1" -- "1" InventoryItem : tracked in
+    Consultation "1" -- "0..*" LabTestOrder : requests
+    LabTestOrder "*" -- "1" LabTest : orders
+    LabTestOrder "1" *-- "0..1" Sample : collects
+    LabTestOrder "1" -- "0..1" LabReport : produces
+    Patient "1" -- "0..*" Admission : undergoes
+    Ward "1" *-- "1..*" Bed : contains
+    Admission "0..1" -- "0..1" Bed : allocates
+    Admission "1" *-- "0..*" TreatmentPlan : logs
+    Patient "1" -- "0..*" Bill : accumulates
+    Bill "1" *-- "1..*" BillItem : items
+    Bill "1" -- "0..*" Payment : settled by
+    Payment "1" *-- "1" Receipt : issues

@@ -1,0 +1,23 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Doctor Consultation (EXP6-COM-03)
+
+    Actor[":Doctor"]
+    UI[":ConsultationUI"]
+    Ctrl[":ConsultationController"]
+    MedRecRepo[":MedicalRecordRepository"]
+    ConsultEntity[":Consultation"]
+    RxEntity[":Prescription"]
+    LabOrderEntity[":LabTestOrder"]
+
+    Actor -- "1: selectPatient(patientId)" --> UI
+    UI -- "1.1: getMedicalHistory(patientId)" --> Ctrl
+    Ctrl -- "1.2: findByPatientId(patientId)" --> MedRecRepo
+    Actor -- "2: submitConsultationNotes(notesDto)" --> UI
+    UI -- "2.1: saveConsultation(patientId, notesDto)" --> Ctrl
+    Ctrl -- "2.2: createConsultation(notesDto)" --> ConsultEntity
+    Ctrl -- "2.3: createPrescription(rxList)" --> RxEntity
+    Ctrl -- "2.4: createLabOrder(labList)" --> LabOrderEntity
+    Ctrl -- "2.5: appendConsultation(recordId, consultObj)" --> MedRecRepo
+    Ctrl -- "2.6: returnSuccess(consultationId)" --> UI
+    UI -- "2.7: displayConfirmation()" --> Actor

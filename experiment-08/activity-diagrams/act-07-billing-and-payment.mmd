@@ -1,0 +1,11 @@
+flowchart TD
+    Start([Start Billing & Payment]) --> FetchUnbilled[Fetch Unbilled Charges Across Modules]
+    FetchUnbilled --> ConsolidateBill[Compile Consultation, Lab, Pharmacy & IP Bed Charges]
+    ConsolidateBill --> ApplyDiscount[Apply Authorized Discounts & Subsidies]
+    ApplyDiscount --> CalculateTotal[Calculate Taxes & Net Payable Balance]
+    CalculateTotal --> SelectPaymentMode[Select Payment Mode: Cash / Card / UPI]
+    SelectPaymentMode --> ProcessPayment{Payment Approved?}
+    ProcessPayment -- No --> DisplayDeclined[Display Payment Failed Alert & Re-try] --> SelectPaymentMode
+    ProcessPayment -- Yes --> UpdateBillPaid[Update Bill Status = Paid]
+    UpdateBillPaid --> GenerateReceipt[Generate & Print Official Itemized Receipt]
+    GenerateReceipt --> End([End Billing])

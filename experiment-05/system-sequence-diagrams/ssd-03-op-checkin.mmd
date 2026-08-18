@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist / Patient
+    participant System as Smart Hospital System (SHMS)
+
+    Receptionist->>System: requestOPCheckIn(patientId, appointmentId)
+    activate System
+    System->>System: verifyAppointmentCurrentDate()
+    System->>System: updateStatusToCheckedIn()
+    System->>System: generateQueueToken()
+    System-->>Receptionist: issueQueueTokenTicket(tokenNumber, doctorRoom)
+    deactivate System

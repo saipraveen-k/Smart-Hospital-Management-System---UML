@@ -1,0 +1,64 @@
+classDiagram
+    class Person {
+        -String personId
+        -String name
+        -String gender
+        -String phone
+        -String email
+        +getDetails() String
+    }
+
+    class Patient {
+        -String patientId
+        -String bloodGroup
+        -String emergencyContact
+        +register() void
+        +bookAppointment() void
+    }
+
+    class Doctor {
+        -String doctorId
+        -String specialization
+        -String qualification
+        -double consultationFee
+        +examinePatient() void
+        +prescribeMedicine() void
+    }
+
+    class Hospital {
+        -String hospitalName
+        -String registrationNumber
+        -String address
+        +getDepartmentList() List
+    }
+
+    class Department {
+        -String deptId
+        -String deptName
+        +getDoctorList() List
+    }
+
+    class Appointment {
+        -String appointmentId
+        -String appointmentDate
+        -String timeSlot
+        -String status
+        +schedule() void
+        +cancel() void
+    }
+
+    class MedicalRecord {
+        -String recordId
+        -String creationDate
+        -String medicalHistory
+        -String allergies
+        +addConsultationNote() void
+    }
+
+    Person <|-- Patient
+    Person <|-- Doctor
+    Hospital "1" -- "1..*" Department : contains
+    Department "1" -- "1..*" Doctor : employs
+    Patient "1" -- "0..*" Appointment : books
+    Doctor "1" -- "0..*" Appointment : conducts
+    Patient "1" -- "1" MedicalRecord : owns

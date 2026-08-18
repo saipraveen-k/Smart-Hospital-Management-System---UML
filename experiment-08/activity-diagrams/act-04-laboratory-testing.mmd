@@ -1,0 +1,12 @@
+flowchart TD
+    Start([Start Laboratory Testing]) --> ReceiveOrder[Receive Lab Test Request]
+    ReceiveOrder --> CollectSpecimen[Collect Specimen & Barcode Container]
+    CollectSpecimen --> UpdateStatusSample[Update Status = SampleCollected]
+    UpdateStatusSample --> LoadAnalyzer[Process Test on Analyzer]
+    LoadAnalyzer --> UpdateStatusProc[Update Status = Processing]
+    UpdateStatusProc --> InputResults[Input Measured Parameters & Attach PDF]
+    InputResults --> VerifyResults{Results Approved?}
+    VerifyResults -- No --> RejectSample[Reject Sample / Re-test] --> CollectSpecimen
+    VerifyResults -- Yes --> ApproveReport[Approve & Upload Lab Report]
+    ApproveReport --> NotifyDoctor[Publish Approved Report & Notify Doctor]
+    NotifyDoctor --> End([End Lab Testing])

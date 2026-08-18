@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist / Patient
+    participant System as Smart Hospital System (SHMS)
+
+    Receptionist->>System: submitRegistrationDetails(name, dob, gender, phone, email, address)
+    activate System
+    System->>System: validateFields()
+    System->>System: checkDuplicatePatient(phone)
+    System->>System: generateUHID()
+    System-->>Receptionist: registrationSuccess(patientId, UHIDCard)
+    deactivate System

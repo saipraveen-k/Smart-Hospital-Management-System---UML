@@ -1,0 +1,21 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Appointment Booking (EXP6-COM-02)
+
+    Actor[":Patient"]
+    UI[":AppointmentUI"]
+    Ctrl[":AppointmentController"]
+    DocRepo[":DoctorRepository"]
+    ApptRepo[":AppointmentRepository"]
+    ApptEntity[":Appointment"]
+
+    Actor -- "1: selectDoctorAndSlot(dept, doctor, slot)" --> UI
+    UI -- "1.1: getAvailableSlots(doctorId, date)" --> Ctrl
+    Ctrl -- "1.2: findSchedule(doctorId, date)" --> DocRepo
+    Actor -- "2: submitBooking(patientId, doctorId, slot)" --> UI
+    UI -- "2.1: bookAppointment(patientId, doctorId, slot)" --> Ctrl
+    Ctrl -- "2.2: checkSlotConflict(doctorId, slot)" --> ApptRepo
+    Ctrl -- "2.3: create(patientId, doctorId, slot)" --> ApptEntity
+    Ctrl -- "2.4: save(apptInstance)" --> ApptRepo
+    Ctrl -- "2.5: confirmBooking(apptId)" --> UI
+    UI -- "2.6: displayTicket(apptId)" --> Actor

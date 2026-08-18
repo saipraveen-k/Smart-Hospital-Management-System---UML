@@ -1,0 +1,62 @@
+classDiagram
+    class User {
+        <<Abstract>>
+        -String userId
+        -String username
+        -String passwordHash
+        +login() boolean
+        +logout() void
+    }
+
+    class Patient {
+        -String patientId
+        -String address
+        +updateProfile() void
+    }
+
+    class Doctor {
+        -String doctorId
+        -String specialization
+        +conductConsultation() void
+    }
+
+    class Hospital {
+        -String name
+        -String code
+    }
+
+    class Department {
+        -String deptCode
+        -String name
+    }
+
+    class Consultation {
+        -String consultationId
+        -String symptoms
+        -String diagnosis
+    }
+
+    class Prescription {
+        -String prescriptionId
+        -String issueDate
+    }
+
+    class PrescriptionItem {
+        -int quantity
+        -String dosage
+    }
+
+    class NotificationService {
+        <<Interface>>
+        +sendNotification(message) void
+    }
+
+    User <|-- Patient : Generalization
+    User <|-- Doctor : Generalization
+    Hospital "1" *-- "1..*" Department : Composition
+    Department "1" o-- "0..*" Doctor : Aggregation
+    Patient "1" -- "0..*" Consultation : Association
+    Doctor "1" -- "0..*" Consultation : Association
+    Consultation "1" *-- "0..1" Prescription : Composition
+    Prescription "1" *-- "1..*" PrescriptionItem : Composition
+    Consultation ..> NotificationService : Dependency

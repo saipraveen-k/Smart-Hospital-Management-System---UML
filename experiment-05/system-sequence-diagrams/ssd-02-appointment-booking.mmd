@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    actor Patient as Patient / Receptionist
+    participant System as Smart Hospital System (SHMS)
+
+    Patient->>System: selectDepartmentAndDoctor(deptId, doctorId)
+    activate System
+    System-->>Patient: displayAvailableSlots(date, slotList)
+    deactivate System
+
+    Patient->>System: bookAppointmentSlot(patientId, doctorId, chosenSlot, date)
+    activate System
+    System->>System: verifySlotAvailability()
+    System->>System: createAppointmentRecord()
+    System-->>Patient: confirmAppointmentBooking(appointmentId, status="Confirmed")
+    deactivate System

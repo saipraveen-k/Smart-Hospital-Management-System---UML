@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Start Inpatient Discharge]) --> SignSummary[Doctor Prepares & Signs Discharge Summary]
+    SignSummary --> InitiateWorkflow[Initiate Discharge Workflow in System]
+    InitiateWorkflow --> VerifyBill{Final Bill Status == Paid?}
+    VerifyBill -- No --> DirectToCashier[Direct Patient to Cashier Desk for Settlement] --> SettleBill[Cashier Settles Final Bill] --> VerifyBill
+    VerifyBill -- Yes --> FinalizeDischarge[Receptionist Approves Discharge]
+    FinalizeDischarge --> UpdateAdmissionStatus[Update Admission Status = Discharged]
+    UpdateAdmissionStatus --> ReleaseBed[Release Allocated Bed -> Status = Available]
+    ReleaseBed --> PrintGatePass[Print Discharge Summary Folder & Gate Pass]
+    PrintGatePass --> End([End Discharge])

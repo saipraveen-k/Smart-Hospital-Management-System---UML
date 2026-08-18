@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor Doctor as Doctor
+    participant ConsultCtrl as ConsultationController
+    participant MedRecRepo as MedicalRecordRepository
+    participant ConsultEntity as Consultation
+    participant RxEntity as Prescription
+
+    Doctor->>ConsultCtrl: submitConsultation(consultationDto)
+    activate ConsultCtrl
+    ConsultCtrl->>MedRecRepo: findByPatientId(dto.patientId)
+    activate MedRecRepo
+    MedRecRepo-->>ConsultCtrl: medicalRecordObj
+    deactivate MedRecRepo
+    ConsultCtrl->>ConsultEntity: create(dto)
+    activate ConsultEntity
+    ConsultEntity-->>ConsultCtrl: consultObj
+    deactivate ConsultEntity
+    ConsultCtrl->>RxEntity: createPrescription(dto.items)
+    activate RxEntity
+    RxEntity-->>ConsultCtrl: rxObj
+    deactivate RxEntity
+    ConsultCtrl->>MedRecRepo: appendConsultation(medRecordId, consultObj)
+    activate MedRecRepo
+    MedRecRepo-->>ConsultCtrl: success
+    deactivate MedRecRepo
+    ConsultCtrl-->>Doctor: consultationSaved(consultId)
+    deactivate ConsultCtrl

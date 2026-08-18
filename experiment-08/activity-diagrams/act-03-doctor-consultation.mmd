@@ -1,0 +1,13 @@
+flowchart TD
+    Start([Start Doctor Consultation]) --> CallToken[Call Next Queue Token]
+    CallToken --> LoadEHR[Load Patient Medical Record]
+    LoadEHR --> PerformExam[Examine Patient & Enter Complaints]
+    PerformExam --> EnterDiagnosis[Select ICD Diagnosis Code]
+    EnterDiagnosis --> DecisionLab{Lab Test Required?}
+    DecisionLab -- Yes --> PlaceLabOrder[Order Diagnostic Lab Test] --> DecisionIP
+    DecisionLab -- No --> DecisionIP{Admission Required?}
+    DecisionIP -- Yes --> RecommendIP[Issue Inpatient Admission Recommendation] --> CreateRx
+    DecisionIP -- No --> CreateRx[Create Electronic Prescription]
+    CreateRx --> SaveConsultation[Save Consultation Entry to Medical Record]
+    SaveConsultation --> UpdateApptStatus[Update Appointment Status to Completed]
+    UpdateApptStatus --> End([End Consultation])

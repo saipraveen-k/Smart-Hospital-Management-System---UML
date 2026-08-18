@@ -1,0 +1,45 @@
+sequenceDiagram
+    autonumber
+    actor Cashier as Cashier
+    participant UI as BillingUI
+    participant Ctrl as BillingController
+    participant BillRepo as BillRepository
+    participant Gateway as PaymentGatewayAdapter
+    participant ReceiptEntity as Receipt
+
+    Cashier->>UI: generateFinalBill(patientId)
+    activate UI
+    UI->>Ctrl: calculateBill(patientId)
+    activate Ctrl
+    Ctrl->>BillRepo: fetchUnbilledItems(patientId)
+    activate BillRepo
+    BillRepo-->>Ctrl: unbilledItemList
+    deactivate BillRepo
+    Ctrl->>Ctrl: calculateTaxAndDiscounts()
+    Ctrl-->>UI: displayConsolidatedBill(billObj)
+    deactivate Ctrl
+
+    Cashier->>UI: processPayment(billId, amount, mode="Card")
+    UI->>Ctrl: executePayment(billId, amount, mode)
+    activate Ctrl
+    Ctrl->>Gateway: authorizeTransaction(amount, cardDetails)
+    activate Gateway
+    Gateway-->>Ctrl: txnResponse(status="SUCCESS", txnRef="TXN-90812")
+    deactivate Gateway
+    alt Payment Successful
+        Ctrl->>BillRepo: updateStatus(billId, "Paid")
+        activate BillRepo
+        BillRepo-->>Ctrl: billUpdated
+        deactivate BillRepo
+        Ctrl->>ReceiptEntity: generateReceipt(billId, txnRef)
+        activate ReceiptEntity
+        ReceiptEntity-->>Ctrl: receiptObj
+        deactivate ReceiptEntity
+        Ctrl-->>UI: return PaymentSuccess(receiptObj)
+        UI-->>Cashier: printOfficialReceipt()
+    else Payment Declined
+        Ctrl-->>UI: return PaymentFailed("Card Declined")
+        UI-->>Cashier: displayDeclinedAlert()
+    end
+    deactivate Ctrl
+    deactivate UI

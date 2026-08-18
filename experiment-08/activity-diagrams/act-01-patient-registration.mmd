@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Start Patient Registration]) --> InputDetails[Input Demographic Details]
+    InputDetails --> ValidateData{Data Valid?}
+    ValidateData -- No --> DisplayFieldError[Display Validation Error] --> InputDetails
+    ValidateData -- Yes --> CheckDuplicate{Duplicate Found?}
+    CheckDuplicate -- Yes --> DisplayDuplicateMsg[Display Existing UHID Alert] --> End([End Registration])
+    CheckDuplicate -- No --> GenerateUHID[Generate Unique UHID]
+    GenerateUHID --> SavePatient[Save Patient Entity to Database]
+    SavePatient --> IssueUHIDCard[Issue UHID Card / Confirmation]
+    IssueUHIDCard --> End

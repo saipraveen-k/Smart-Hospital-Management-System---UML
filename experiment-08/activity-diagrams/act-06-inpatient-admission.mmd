@@ -1,0 +1,12 @@
+flowchart TD
+    Start([Start Inpatient Admission]) --> ReceiveRecommendation[Receive IP Admission Order]
+    ReceiveRecommendation --> CheckActiveAdm{Active Admission Exists?}
+    CheckActiveAdm -- Yes --> BlockAdmission[Reject - Active IP Stay Exists] --> End([End Admission])
+    CheckActiveAdm -- No --> SelectWard[Select Preferred Ward Category]
+    SelectWard --> QueryBeds[Query Real-Time Ward Bed Occupancy]
+    QueryBeds --> BedAvailable{Available Bed Found?}
+    BedAvailable -- No --> AlertFullWard[Alert Full Ward & Offer Alternate Ward] --> SelectWard
+    BedAvailable -- Yes --> AllocateBed[Assign Bed & Update Bed Status = Occupied]
+    AllocateBed --> CreateIPRecord[Set Admission Status = BedAllocated]
+    CreateIPRecord --> IssueIPCard[Issue Inpatient Admission Card & Notify Ward]
+    IssueIPCard --> End

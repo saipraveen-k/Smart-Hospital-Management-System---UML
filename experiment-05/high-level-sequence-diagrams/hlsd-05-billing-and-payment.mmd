@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor Cashier as Cashier
+    participant BillCtrl as BillingController
+    participant BillRepo as BillRepository
+    participant PaymentProc as PaymentProcessor
+    participant ReceiptEntity as Receipt
+
+    Cashier->>BillCtrl: processBillPayment(billId, paymentDto)
+    activate BillCtrl
+    BillCtrl->>BillRepo: findById(billId)
+    activate BillRepo
+    BillRepo-->>BillCtrl: billObj
+    deactivate BillRepo
+    BillCtrl->>PaymentProc: executePayment(paymentDto.amount, paymentDto.mode)
+    activate PaymentProc
+    PaymentProc-->>BillCtrl: txnSuccess(txnRef)
+    deactivate PaymentProc
+    BillCtrl->>BillRepo: markPaid(billId)
+    activate BillRepo
+    BillRepo-->>BillCtrl: billPaid
+    deactivate BillRepo
+    BillCtrl->>ReceiptEntity: generateReceipt(billObj, txnRef)
+    activate ReceiptEntity
+    ReceiptEntity-->>BillCtrl: receiptObj
+    deactivate ReceiptEntity
+    BillCtrl-->>Cashier: paymentCompleted(receiptId)
+    deactivate BillCtrl

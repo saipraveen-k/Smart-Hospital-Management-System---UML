@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor Patient as Patient
+    participant ApptCtrl as AppointmentController
+    participant DocRepo as DoctorRepository
+    participant ApptRepo as AppointmentRepository
+    participant ApptEntity as Appointment
+
+    Patient->>ApptCtrl: bookSlot(patientId, doctorId, slotTime)
+    activate ApptCtrl
+    ApptCtrl->>DocRepo: checkAvailability(doctorId, slotTime)
+    activate DocRepo
+    DocRepo-->>ApptCtrl: isAvailable = true
+    deactivate DocRepo
+    ApptCtrl->>ApptEntity: create(patientId, doctorId, slotTime)
+    activate ApptEntity
+    ApptEntity-->>ApptCtrl: appointmentObj
+    deactivate ApptEntity
+    ApptCtrl->>ApptRepo: save(appointmentObj)
+    activate ApptRepo
+    ApptRepo-->>ApptCtrl: savedAppt
+    deactivate ApptRepo
+    ApptCtrl-->>Patient: bookingConfirmed(apptId)
+    deactivate ApptCtrl

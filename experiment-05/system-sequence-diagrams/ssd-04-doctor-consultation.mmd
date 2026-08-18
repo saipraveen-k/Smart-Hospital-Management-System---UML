@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor Doctor as Doctor
+    participant System as Smart Hospital System (SHMS)
+
+    Doctor->>System: callNextToken(doctorId)
+    activate System
+    System-->>Doctor: displayPatientClinicalFile(patientId, medicalRecord)
+    deactivate System
+
+    Doctor->>System: submitConsultationData(complaints, diagnosisCode, prescriptionItems)
+    activate System
+    System->>System: saveConsultationRecord()
+    System->>System: saveDiagnosis()
+    System->>System: generatePrescription()
+    System-->>Doctor: consultationCompleted(consultationId, status="Completed")
+    deactivate System

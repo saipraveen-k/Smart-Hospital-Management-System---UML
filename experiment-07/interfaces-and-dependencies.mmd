@@ -1,0 +1,71 @@
+classDiagram
+    class PaymentProcessor {
+        <<Interface>>
+        +processPayment(amount: double, details: PaymentDto) PaymentResultDto
+    }
+
+    class CashPaymentProcessor {
+        +processPayment(amount: double, details: PaymentDto) PaymentResultDto
+    }
+
+    class CardPaymentProcessor {
+        +processPayment(amount: double, details: PaymentDto) PaymentResultDto
+    }
+
+    class UPIPaymentProcessor {
+        +processPayment(amount: double, details: PaymentDto) PaymentResultDto
+    }
+
+    class NotificationService {
+        <<Interface>>
+        +sendNotification(recipient: String, message: String) boolean
+    }
+
+    class SMSNotificationService {
+        +sendNotification(recipient: String, message: String) boolean
+    }
+
+    class EmailNotificationService {
+        +sendNotification(recipient: String, message: String) boolean
+    }
+
+    class ReportGenerator {
+        <<Interface>>
+        +generateReport(reportType: String, filter: ReportFilterDto) ReportDataDto
+    }
+
+    class PDFReportGenerator {
+        +generateReport(reportType: String, filter: ReportFilterDto) ReportDataDto
+    }
+
+    class AuthenticationService {
+        <<Interface>>
+        +authenticate(user: String, pass: String) AuthTokenDto
+    }
+
+    class RBACAuthenticationService {
+        +authenticate(user: String, pass: String) AuthTokenDto
+    }
+
+    class BillingController {
+        -PaymentProcessor paymentProcessor
+        +settleBill(billId: String, amount: double, mode: String) ReceiptDto
+    }
+
+    class ConsultationController {
+        -NotificationService notificationService
+        +completeConsultation(consultId: String) void
+    }
+
+    PaymentProcessor <|.. CashPaymentProcessor : realizes
+    PaymentProcessor <|.. CardPaymentProcessor : realizes
+    PaymentProcessor <|.. UPIPaymentProcessor : realizes
+
+    NotificationService <|.. SMSNotificationService : realizes
+    NotificationService <|.. EmailNotificationService : realizes
+
+    ReportGenerator <|.. PDFReportGenerator : realizes
+    AuthenticationService <|.. RBACAuthenticationService : realizes
+
+    BillingController ..> PaymentProcessor : Dependency (DIP)
+    ConsultationController ..> NotificationService : Dependency (DIP)

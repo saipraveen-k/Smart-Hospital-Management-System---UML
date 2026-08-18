@@ -1,0 +1,52 @@
+sequenceDiagram
+    autonumber
+    actor Doctor as Doctor
+    participant UI as ConsultationUI
+    participant Ctrl as ConsultationController
+    participant MedRecRepo as MedicalRecordRepository
+    participant ConsultEntity as Consultation
+    participant RxEntity as Prescription
+    participant LabOrderEntity as LabTestOrder
+
+    Doctor->>UI: selectPatientFromQueue(patientId)
+    activate UI
+    UI->>Ctrl: getMedicalHistory(patientId)
+    activate Ctrl
+    Ctrl->>MedRecRepo: findByPatientId(patientId)
+    activate MedRecRepo
+    MedRecRepo-->>Ctrl: medicalRecordObj
+    deactivate MedRecRepo
+    Ctrl-->>UI: renderEHRSummary(medicalRecordObj)
+    deactivate Ctrl
+
+    Doctor->>UI: submitConsultationNotes(complaints, diagnosisCode, rxList, labList)
+    UI->>Ctrl: saveConsultation(patientId, doctorId, notesDto)
+    activate Ctrl
+    Ctrl->>ConsultEntity: createConsultation(notesDto)
+    activate ConsultEntity
+    ConsultEntity-->>Ctrl: consultObj
+    deactivate ConsultEntity
+
+    opt Prescription Included
+        Ctrl->>RxEntity: createPrescription(rxList)
+        activate RxEntity
+        RxEntity-->>Ctrl: rxObj
+        deactivate RxEntity
+    end
+
+    opt Lab Tests Ordered
+        Ctrl->>LabOrderEntity: createLabOrder(labList)
+        activate LabOrderEntity
+        LabOrderEntity-->>Ctrl: labOrderObj
+        deactivate LabOrderEntity
+    end
+
+    Ctrl->>MedRecRepo: appendConsultation(patientId, consultObj)
+    activate MedRecRepo
+    MedRecRepo-->>Ctrl: updatedRecord
+    deactivate MedRecRepo
+
+    Ctrl-->>UI: return ConsultationSuccess(consultationId)
+    UI-->>Doctor: displaySuccessNotification()
+    deactivate Ctrl
+    deactivate UI

@@ -1,0 +1,216 @@
+classDiagram
+    class User {
+        <<Abstract>>
+        #String userId
+        #String username
+        #String passwordHash
+        #String name
+        #String email
+        #String phone
+        #String role
+        #boolean isActive
+        +login(credentials: LoginDto) boolean
+        +logout() void
+        +updatePassword(oldPass: String, newPass: String) boolean
+    }
+
+    class Patient {
+        -String patientId
+        -String dob
+        -String gender
+        -String address
+        -String emergencyContact
+        -String bloodGroup
+        +register(dto: RegistrationDto) String
+        +updateProfile(dto: ProfileDto) boolean
+        +bookAppointment(doctorId: String, date: String, slot: String) String
+        +viewMedicalHistory() MedicalRecordDto
+        +payBill(billId: String, amount: double, mode: String) ReceiptDto
+    }
+
+    class Doctor {
+        -String doctorId
+        -String specialization
+        -String qualification
+        -double consultationFee
+        -String roomNumber
+        -int maxDailyQuota
+        +examinePatient(patientId: String) MedicalRecordDto
+        +recordConsultation(dto: ConsultationDto) String
+        +prescribeMedicine(items: List) String
+        +orderLabTest(testIds: List) String
+        +recommendAdmission(wardType: String, diagnosis: String) String
+    }
+
+    class Receptionist {
+        -String receptionistId
+        -String deskLocation
+        +registerWalkIn(dto: RegistrationDto) String
+        +checkInPatient(patientId: String, apptId: String) int
+        +allocateBed(admissionId: String, bedId: String) boolean
+        +processDischarge(admissionId: String) boolean
+    }
+
+    class Pharmacist {
+        -String pharmacistId
+        -String licenseNumber
+        +verifyPrescription(rxId: String) PrescriptionDto
+        +dispenseMedicine(rxId: String) boolean
+        +updateStock(medicineId: String, qty: int) void
+    }
+
+    class LabTechnician {
+        -String technicianId
+        -String labSection
+        +collectSample(orderId: String, sampleType: String) SampleDto
+        +inputResults(orderId: String, values: String, pdf: String) void
+        +approveReport(orderId: String) boolean
+    }
+
+    class Cashier {
+        -String cashierId
+        -String counterNumber
+        +generateConsolidatedBill(patientId: String) BillDto
+        +applyDiscount(billId: String, discount: double) void
+        +processPayment(billId: String, amount: double, mode: String) ReceiptDto
+    }
+
+    class Appointment {
+        -String appointmentId
+        -String patientId
+        -String doctorId
+        -String appointmentDate
+        -String timeSlot
+        -String status
+        -int queueToken
+        +scheduleSlot() boolean
+        +checkIn() int
+        +cancel(reason: String) boolean
+    }
+
+    class MedicalRecord {
+        -String recordId
+        -String patientId
+        -String creationDate
+        -List allergies
+        +addConsultationEntry(consultation: Consultation) void
+        +addLabReport(report: LabReport) void
+    }
+
+    class Consultation {
+        -String consultationId
+        -String patientId
+        -String doctorId
+        -String consultationDate
+        -String chiefComplaints
+        -String diagnosisCode
+        +recordAdvice(adviceText: String) void
+        +issuePrescription() Prescription
+        +requestLabTest() LabTestOrder
+    }
+
+    class Prescription {
+        -String prescriptionId
+        -String consultationId
+        -String issueDate
+        -String status
+        -String doctorSignature
+        +addItem(medicineId: String, dosage: String, qty: int) void
+        +verifySignature() boolean
+        +markDispensed() void
+    }
+
+    class LabTestOrder {
+        -String orderId
+        -String patientId
+        -String doctorId
+        -String orderDate
+        -String status
+        +collectSample(barcode: String, sampleType: String) Sample
+        +inputResults(measuredValues: String, pdfPath: String) void
+        +approveReport(technicianId: String) boolean
+    }
+
+    class Admission {
+        -String admissionId
+        -String patientId
+        -String admissionDate
+        -String status
+        -String bedId
+        +allocateBed(bedId: String) boolean
+        +initiateDischarge() boolean
+        +completeDischarge() void
+    }
+
+    class Bed {
+        -String bedId
+        -String wardId
+        -String bedNumber
+        -String status
+        +occupy() void
+        +release() void
+    }
+
+    class Bill {
+        -String billId
+        -String patientId
+        -double grossAmount
+        -double discountAmount
+        -double netAmount
+        -String status
+        +addChargeItem(desc: String, amount: double, qty: int) void
+        +calculateNetTotal() double
+        +markAsPaid() void
+    }
+
+    class Payment {
+        -String paymentId
+        -String billId
+        -double amountPaid
+        -String paymentMode
+        -String transactionRef
+        +process() boolean
+        +generateReceipt() Receipt
+    }
+
+    class Receipt {
+        -String receiptId
+        -String paymentId
+        -String receiptDate
+        -double amountReceived
+        +printReceipt() void
+    }
+
+    %% Interfaces
+    class PaymentProcessor {
+        <<Interface>>
+        +processPayment(amount: double, details: PaymentDto) PaymentResultDto
+    }
+
+    class NotificationService {
+        <<Interface>>
+        +sendNotification(recipient: String, msg: String, channel: String) boolean
+    }
+
+    %% Realizations & Generalizations
+    User <|-- Patient
+    User <|-- Doctor
+    User <|-- Receptionist
+    User <|-- Pharmacist
+    User <|-- LabTechnician
+    User <|-- Cashier
+
+    Patient "1" -- "1" MedicalRecord
+    Patient "1" -- "0..*" Appointment
+    Doctor "1" -- "0..*" Appointment
+    Appointment "1" -- "0..1" Consultation
+    Consultation "1" *-- "0..1" Prescription
+    Consultation "1" -- "0..*" LabTestOrder
+    Patient "1" -- "0..*" Admission
+    Admission "0..1" -- "0..1" Bed
+    Patient "1" -- "0..*" Bill
+    Bill "1" -- "0..*" Payment
+    Payment "1" *-- "1" Receipt
+
+    Payment ..> PaymentProcessor : uses
+    Consultation ..> NotificationService : uses

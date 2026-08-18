@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    actor Cashier as Cashier / Patient
+    participant System as Smart Hospital System (SHMS)
+
+    Cashier->>System: generateConsolidatedBill(patientId)
+    activate System
+    System->>System: aggregateUnbilledCharges()
+    System->>System: calculateTaxesAndDiscounts()
+    System-->>Cashier: displayBillSummary(billId, netAmount, lineItems)
+    deactivate System
+
+    Cashier->>System: submitPayment(billId, amount, paymentMode)
+    activate System
+    System->>System: processPaymentTransaction()
+    System->>System: updateBillStatusToPaid()
+    System->>System: generateReceipt()
+    System-->>Cashier: paymentReceiptIssued(receiptId, status="Paid")
+    deactivate System

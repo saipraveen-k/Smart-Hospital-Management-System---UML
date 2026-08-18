@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Start Appointment Booking]) --> SelectDept[Select Department & Doctor]
+    SelectDept --> FetchSlots[Fetch Available Consultation Slots]
+    FetchSlots --> SelectSlot[Select Desired Slot & Date]
+    SelectSlot --> CheckSlot{Slot Open?}
+    CheckSlot -- No --> SlotConflict[Display Slot Conflict Alert] --> FetchSlots
+    CheckSlot -- Yes --> CreateAppt[Create Appointment Record Status=Confirmed]
+    CreateAppt --> SendNotification[Dispatch SMS / Email Notification]
+    SendNotification --> IssueTicket[Issue Appointment Confirmation Slip]
+    IssueTicket --> End([End Booking])

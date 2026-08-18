@@ -1,0 +1,21 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Pharmacy Dispensing (EXP6-COM-05)
+
+    Actor[":Pharmacist"]
+    UI[":PharmacyUI"]
+    Ctrl[":PharmacyController"]
+    RxRepo[":PrescriptionRepository"]
+    InvRepo[":InventoryRepository"]
+    BillRepo[":BillRepository"]
+
+    Actor -- "1: scanPrescription(rxId)" --> UI
+    UI -- "1.1: verifyPrescription(rxId)" --> Ctrl
+    Ctrl -- "1.2: findById(rxId)" --> RxRepo
+    Actor -- "2: confirmDispensing(rxId)" --> UI
+    UI -- "2.1: processDispense(rxId)" --> Ctrl
+    Ctrl -- "2.2: checkAndDecrementStock(medId, qty)" --> InvRepo
+    Ctrl -- "2.3: updateStatus(rxId, Dispensed)" --> RxRepo
+    Ctrl -- "2.4: postPharmacyCharges(patientId, cost)" --> BillRepo
+    Ctrl -- "2.5: returnDispenseSuccess()" --> UI
+    UI -- "2.6: printDispenseSlip()" --> Actor

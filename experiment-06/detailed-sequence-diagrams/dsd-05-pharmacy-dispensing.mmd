@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    actor Pharmacist as Pharmacist
+    participant UI as PharmacyUI
+    participant Ctrl as PharmacyController
+    participant RxRepo as PrescriptionRepository
+    participant InvRepo as InventoryRepository
+    participant BillRepo as BillRepository
+
+    Pharmacist->>UI: scanPrescription(rxId)
+    activate UI
+    UI->>Ctrl: verifyPrescription(rxId)
+    activate Ctrl
+    Ctrl->>RxRepo: findById(rxId)
+    activate RxRepo
+    RxRepo-->>Ctrl: rxObj
+    deactivate RxRepo
+    Ctrl-->>UI: displayRxItems(rxObj.items)
+    deactivate Ctrl
+
+    Pharmacist->>UI: confirmDispensing(rxId)
+    UI->>Ctrl: processDispense(rxId)
+    activate Ctrl
+    loop For Each Item in Rx
+        Ctrl->>InvRepo: checkAndDecrementStock(item.medicineId, item.quantity)
+        activate InvRepo
+        InvRepo-->>Ctrl: stockUpdated(remainingQty)
+        deactivate InvRepo
+        opt Low Stock Triggered
+            Ctrl->>Ctrl: dispatchLowStockAlert(medicineId)
+        end
+    end
+    Ctrl->>RxRepo: updateStatus(rxId, "Dispensed")
+    activate RxRepo
+    RxRepo-->>Ctrl: rxUpdated
+    deactivate RxRepo
+    Ctrl->>BillRepo: postPharmacyCharges(rxObj.patientId, rxObj.totalCost)
+    activate BillRepo
+    BillRepo-->>Ctrl: chargePosted
+    deactivate BillRepo
+    Ctrl-->>UI: return DispenseSuccess()
+    UI-->>Pharmacist: printDispenseSlip()
+    deactivate Ctrl
+    deactivate UI

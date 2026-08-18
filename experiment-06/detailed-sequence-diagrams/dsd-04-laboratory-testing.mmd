@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    actor Tech as Lab Technician
+    participant UI as LaboratoryUI
+    participant Ctrl as LaboratoryController
+    participant OrderRepo as LabOrderRepository
+    participant SampleEntity as Sample
+    participant ReportEntity as LabReport
+
+    Tech->>UI: scanSampleBarcode(barcode)
+    activate UI
+    UI->>Ctrl: getOrderDetailsByBarcode(barcode)
+    activate Ctrl
+    Ctrl->>OrderRepo: findByBarcode(barcode)
+    activate OrderRepo
+    OrderRepo-->>Ctrl: orderObj
+    deactivate OrderRepo
+    Ctrl-->>UI: displayTestParameters(orderObj)
+    deactivate Ctrl
+
+    Tech->>UI: submitTestResults(orderId, measuredValues, pdfReport)
+    UI->>Ctrl: processResults(orderId, measuredValues, pdfReport)
+    activate Ctrl
+    Ctrl->>SampleEntity: markProcessed()
+    activate SampleEntity
+    SampleEntity-->>Ctrl: sampleUpdated
+    deactivate SampleEntity
+    Ctrl->>ReportEntity: createReport(orderId, measuredValues, status="Approved")
+    activate ReportEntity
+    ReportEntity-->>Ctrl: reportObj
+    deactivate ReportEntity
+    Ctrl->>OrderRepo: updateOrderStatus(orderId, "Approved")
+    activate OrderRepo
+    OrderRepo-->>Ctrl: orderUpdated
+    deactivate OrderRepo
+    Ctrl-->>UI: return ReportPublishedSuccess(reportId)
+    UI-->>Tech: displayApprovalReceipt()
+    deactivate Ctrl
+    deactivate UI

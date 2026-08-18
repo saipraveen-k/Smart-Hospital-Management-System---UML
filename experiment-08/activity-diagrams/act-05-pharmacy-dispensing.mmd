@@ -1,0 +1,12 @@
+flowchart TD
+    Start([Start Pharmacy Dispensing]) --> ReceiveRx[Receive Digital Prescription]
+    ReceiveRx --> VerifySignature{Doctor Signature Valid?}
+    VerifySignature -- No --> RejectRx[Reject Prescription] --> End([End Dispensing])
+    VerifySignature -- Yes --> CheckStock{Stock Available?}
+    CheckStock -- Partial/No --> TriggerLowStock[Trigger Low Stock Alert / Partial Pick] --> PickMeds
+    CheckStock -- Yes --> PickMeds[Pick Prescribed Medication Items]
+    PickMeds --> DecrementInv[Auto-Decrement Stock Quantities in Inventory]
+    DecrementInv --> UpdateRxStatus[Update Prescription Status to Dispensed]
+    UpdateRxStatus --> PostCharge[Post Pharmacy Charges to Billing]
+    PostCharge --> HandoverMeds[Handover Medication & Print Usage Slip]
+    HandoverMeds --> End

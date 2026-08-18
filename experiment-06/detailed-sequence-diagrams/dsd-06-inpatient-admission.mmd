@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist
+    participant UI as AdmissionUI
+    participant Ctrl as AdmissionController
+    participant WardRepo as WardRepository
+    participant AdmRepo as AdmissionRepository
+    participant BedEntity as Bed
+
+    Receptionist->>UI: selectWardAndGetAvailableBeds(wardId)
+    activate UI
+    UI->>Ctrl: getAvailableBeds(wardId)
+    activate Ctrl
+    Ctrl->>WardRepo: findAvailableBeds(wardId)
+    activate WardRepo
+    WardRepo-->>Ctrl: availableBedList
+    deactivate WardRepo
+    Ctrl-->>UI: renderBedGrid(availableBedList)
+    deactivate Ctrl
+
+    Receptionist->>UI: assignBedToPatient(admissionId, bedId)
+    UI->>Ctrl: processBedAllocation(admissionId, bedId)
+    activate Ctrl
+    Ctrl->>BedEntity: updateStatus(bedId, "Occupied")
+    activate BedEntity
+    BedEntity-->>Ctrl: bedStatusUpdated
+    deactivate BedEntity
+    Ctrl->>AdmRepo: updateAdmission(admissionId, bedId, status="BedAllocated")
+    activate AdmRepo
+    AdmRepo-->>Ctrl: admissionUpdated
+    deactivate AdmRepo
+    Ctrl-->>UI: return AllocationSuccess()
+    UI-->>Receptionist: displayAdmissionCard(admissionId, bedId)
+    deactivate Ctrl
+    deactivate UI

@@ -1,0 +1,48 @@
+sequenceDiagram
+    autonumber
+    actor Receptionist as Receptionist / Doctor
+    participant UI as AdmissionUI
+    participant Ctrl as AdmissionController
+    participant BillRepo as BillRepository
+    participant AdmRepo as AdmissionRepository
+    participant BedEntity as Bed
+
+    Doctor->>UI: submitDischargeSummary(admissionId, summaryDto)
+    activate UI
+    UI->>Ctrl: saveDischargeSummary(admissionId, summaryDto)
+    activate Ctrl
+    Ctrl->>AdmRepo: appendDischargeSummary(admissionId, summaryDto)
+    activate AdmRepo
+    AdmRepo-->>Ctrl: summarySaved
+    deactivate AdmRepo
+    Ctrl-->>UI: return SummarySavedSuccess()
+    deactivate Ctrl
+
+    Receptionist->>UI: finalizeDischarge(admissionId)
+    UI->>Ctrl: executeDischarge(admissionId)
+    activate Ctrl
+    Ctrl->>BillRepo: getBillStatusByAdmission(admissionId)
+    activate BillRepo
+    BillRepo-->>Ctrl: billStatus = "Paid"
+    deactivate BillRepo
+    alt Bill Pending Payment
+        Ctrl-->>UI: return Error("Unpaid bill balance pending")
+        UI-->>Receptionist: displayPendingBillBlockAlert()
+    else Bill Paid
+        Ctrl->>AdmRepo: getAdmissionBedId(admissionId)
+        activate AdmRepo
+        AdmRepo-->>Ctrl: bedId
+        deactivate AdmRepo
+        Ctrl->>BedEntity: updateStatus(bedId, "Available")
+        activate BedEntity
+        BedEntity-->>Ctrl: bedReleased
+        deactivate BedEntity
+        Ctrl->>AdmRepo: updateStatus(admissionId, "Discharged")
+        activate AdmRepo
+        AdmRepo-->>Ctrl: statusUpdated
+        deactivate AdmRepo
+        Ctrl-->>UI: return DischargeCompletedSuccess()
+        UI-->>Receptionist: printDischargeGatePass()
+    end
+    deactivate Ctrl
+    deactivate UI

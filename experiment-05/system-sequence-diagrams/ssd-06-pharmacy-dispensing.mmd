@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor Pharmacist as Pharmacist
+    participant System as Smart Hospital System (SHMS)
+
+    Pharmacist->>System: searchPendingPrescription(patientId)
+    activate System
+    System-->>Pharmacist: displayPrescriptionDetails(prescriptionId, drugList)
+    deactivate System
+
+    Pharmacist->>System: dispenseMedication(prescriptionId, itemsToDispense)
+    activate System
+    System->>System: verifyStockAvailability()
+    System->>System: decrementInventory()
+    System->>System: postPharmacyCharges()
+    System-->>Pharmacist: dispensingSuccess(status="Dispensed", chargeItemId)
+    deactivate System

@@ -1,0 +1,82 @@
+classDiagram
+    class User {
+        <<Abstract>>
+        +userId
+        +username
+        +name
+        +role
+    }
+
+    class Patient {
+        +patientId
+        +phone
+        +bloodGroup
+    }
+
+    class Doctor {
+        +doctorId
+        +specialization
+        +consultationFee
+    }
+
+    class Hospital {
+        +name
+        +registrationNumber
+    }
+
+    class Department {
+        +deptId
+        +deptName
+    }
+
+    class Appointment {
+        +appointmentId
+        +appointmentDate
+        +status
+    }
+
+    class Consultation {
+        +consultationId
+        +chiefComplaints
+    }
+
+    class Prescription {
+        +prescriptionId
+        +issueDate
+        +status
+    }
+
+    class LabTestOrder {
+        +orderId
+        +urgency
+        +status
+    }
+
+    class Admission {
+        +admissionId
+        +status
+    }
+
+    class Bed {
+        +bedId
+        +status
+    }
+
+    class Bill {
+        +billId
+        +netAmount
+        +status
+    }
+
+    User <|-- Patient
+    User <|-- Doctor
+    Hospital "1" *-- "1..*" Department
+    Department "1" o-- "0..*" Doctor
+    Patient "1" -- "0..*" Appointment
+    Doctor "1" -- "0..*" Appointment
+    Appointment "1" -- "0..1" Consultation
+    Consultation "1" *-- "0..1" Prescription
+    Consultation "1" -- "0..*" LabTestOrder
+    Patient "1" -- "0..*" Admission
+    Admission "1" -- "0..1" Bed
+    Patient "1" -- "0..*" Bill

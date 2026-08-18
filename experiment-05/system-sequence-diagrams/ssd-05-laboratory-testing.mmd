@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor Tech as Lab Technician
+    participant System as Smart Hospital System (SHMS)
+
+    Tech->>System: fetchPendingTestOrders()
+    activate System
+    System-->>Tech: displayTestOrderQueue(orderList)
+    deactivate System
+
+    Tech->>System: logSampleCollection(orderId, sampleType)
+    activate System
+    System-->>Tech: sampleLoggedBarcodeGenerated(sampleId, status="SampleCollected")
+    deactivate System
+
+    Tech->>System: submitTestResultsAndReport(orderId, resultValues, pdfReport)
+    activate System
+    System->>System: verifyReferenceRanges()
+    System->>System: updateStatusToApproved()
+    System-->>Tech: labReportPublished(reportId, status="Approved")
+    deactivate System

@@ -1,0 +1,20 @@
+flowchart LR
+    %% UML Communication Diagram — Mermaid Representation
+    %% Scenario: Inpatient Admission (EXP6-COM-06)
+
+    Actor[":Receptionist"]
+    UI[":AdmissionUI"]
+    Ctrl[":AdmissionController"]
+    WardRepo[":WardRepository"]
+    AdmRepo[":AdmissionRepository"]
+    BedEntity[":Bed"]
+
+    Actor -- "1: selectWard(wardId)" --> UI
+    UI -- "1.1: getAvailableBeds(wardId)" --> Ctrl
+    Ctrl -- "1.2: findAvailableBeds(wardId)" --> WardRepo
+    Actor -- "2: assignBed(admissionId, bedId)" --> UI
+    UI -- "2.1: processBedAllocation(admissionId, bedId)" --> Ctrl
+    Ctrl -- "2.2: updateStatus(bedId, Occupied)" --> BedEntity
+    Ctrl -- "2.3: updateAdmission(admissionId, BedAllocated)" --> AdmRepo
+    Ctrl -- "2.4: returnAllocationSuccess()" --> UI
+    UI -- "2.5: displayAdmissionCard()" --> Actor

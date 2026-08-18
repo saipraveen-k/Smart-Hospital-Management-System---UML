@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> Requested : recommendIPAdmission()
+    Requested --> Admitted : acceptAdmission()
+    Requested --> Cancelled : cancelAdmission()
+
+    Admitted --> BedAllocated : assignWardBed() [bed.status == Available]
+    BedAllocated --> UnderTreatment : startIPTreatmentPlan()
+    UnderTreatment --> DischargeInitiated : signDischargeSummary()
+
+    DischargeInitiated --> Discharged : approveDischarge() [bill.status == Paid]
+
+    Discharged --> [*]
+    Cancelled --> [*]

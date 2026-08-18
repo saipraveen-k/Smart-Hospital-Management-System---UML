@@ -1,0 +1,14 @@
+stateDiagram-v2
+    [*] --> Pending : generateConsolidatedBill()
+    Pending --> Processing : submitPaymentTransaction()
+    Pending --> Cancelled : cancelBill()
+
+    Processing --> Paid : txnSuccess()
+    Processing --> Failed : txnDeclined()
+
+    Failed --> Pending : retryPayment()
+    Paid --> Refunded : processApprovedRefund()
+
+    Paid --> [*]
+    Refunded --> [*]
+    Cancelled --> [*]

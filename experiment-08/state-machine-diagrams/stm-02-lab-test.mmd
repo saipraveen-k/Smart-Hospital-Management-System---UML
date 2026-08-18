@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> Requested : orderLabTest()
+    Requested --> SamplePending : receiveTestOrder()
+    Requested --> Cancelled : cancelTestOrder()
+
+    SamplePending --> SampleCollected : collectSpecimen()
+    SampleCollected --> Processing : loadAnalyzer()
+    Processing --> ResultEntered : inputMeasuredValues()
+
+    ResultEntered --> Approved : verifyAndApproveReport()
+    ResultEntered --> Processing : rejectResultsForRetest()
+
+    Approved --> Reported : publishReportToEHR()
+
+    Reported --> [*]
+    Cancelled --> [*]
