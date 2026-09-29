@@ -257,6 +257,12 @@ export interface DemoAdmission {
   status: 'Admitted' | 'Bed Allocated' | 'Under Treatment' | 'Discharge Initiated' | 'Discharged';
 }
 
+export interface DemoBed {
+  id: string;
+  bedNumber: string;
+  status: 'Available' | 'Occupied' | 'Under Maintenance';
+}
+
 export interface DemoBill {
   id: string;
   patientId: string;

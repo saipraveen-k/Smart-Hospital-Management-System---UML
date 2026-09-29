@@ -69,6 +69,10 @@ interface DemoStore {
   notifications: DemoNotification[];
   auditLogs: DemoAuditLog[];
 
+  // Helper Logging Actions
+  addAuditLog: (userRole: UserRole, action: string, entity: string, entityId: string) => void;
+  addNotification: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'alert') => void;
+
   // Store Actions
   addPatient: (patient: Omit<DemoPatient, 'id' | 'uhid' | 'registeredDate'>) => DemoPatient;
   bookAppointment: (appointment: Omit<DemoAppointment, 'id' | 'tokenNumber' | 'status'>) => DemoAppointment;
@@ -85,7 +89,14 @@ interface DemoStore {
   allocateBed: (admissionId: string, bedId: string) => void;
   dischargeAdmission: (admissionId: string) => void;
 
+  addBill: (bill: Omit<DemoBill, 'id' | 'billDate' | 'status' | 'paidAmount'>) => DemoBill;
   processPayment: (billId: string, amount: number, method: 'Cash' | 'Card' | 'UPI') => DemoPayment;
+  cancelAppointment: (appointmentId: string) => void;
+
+  addMedicine: (medicine: Omit<DemoMedicine, 'id'>) => DemoMedicine;
+  updateMedicineStock: (medicineId: string, newStock: number) => void;
+  updatePrescriptionStatus: (prescriptionId: string, status: DemoPrescription['status']) => void;
+
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
 
@@ -139,6 +150,35 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
   notifications: SEEDED_NOTIFICATIONS,
   auditLogs: SEEDED_AUDIT_LOGS,
 
+  // Helper Logging Actions
+  addAuditLog: (userRole: UserRole, action: string, entity: string, entityId: string) => {
+    const count = get().auditLogs.length + 101;
+    const newLog: DemoAuditLog = {
+      id: `LOG-${count}`,
+      timestamp: new Date().toLocaleString(),
+      userRole,
+      userName: `Demo ${userRole}`,
+      action,
+      entity,
+      entityId,
+      details: `${action} executed on ${entity} (${entityId})`
+    };
+    set((s) => ({ auditLogs: [newLog, ...s.auditLogs] }));
+  },
+
+  addNotification: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'alert') => {
+    const count = get().notifications.length + 1;
+    const newNotif: DemoNotification = {
+      id: `NOTIF-${String(count).padStart(2, '0')}`,
+      title,
+      message,
+      timestamp: 'Just now',
+      read: false,
+      type
+    };
+    set((s) => ({ notifications: [newNotif, ...s.notifications] }));
+  },
+
   // --- ACTIONS ---
   addPatient: (patientData) => {
     const state = get();
@@ -153,7 +193,6 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
 
     set((s) => ({ patients: [newPatient, ...s.patients] }));
 
-    // Audit log & notification
     get().addAuditLog(state.demoRole, `Registered patient ${newPatient.name}`, 'Patient', newId);
     get().addNotification(
       'New Patient Registered',
@@ -292,7 +331,6 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
     }));
 
     if (rx) {
-      // Decrement inventory stock
       rx.medicines.forEach((medItem) => {
         set((s) => ({
           medicines: s.medicines.map((m) =>
@@ -372,6 +410,27 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
     }
   },
 
+  addBill: (billData) => {
+    const state = get();
+    const newId = `BILL-2026-${String(state.bills.length + 1).padStart(3, '0')}`;
+    const newBill: DemoBill = {
+      ...billData,
+      id: newId,
+      billDate: new Date().toISOString().split('T')[0],
+      paidAmount: 0,
+      status: 'Pending'
+    };
+    set((s) => ({ bills: [newBill, ...s.bills] }));
+
+    get().addAuditLog(state.demoRole, `Generated bill ${newId} for ₹${newBill.netAmount}`, 'Bill', newId);
+    get().addNotification(
+      'New Invoice Issued',
+      `Bill ${newId} issued for ${newBill.patientName} (Amount: ₹${newBill.netAmount.toLocaleString()}).`,
+      'info'
+    );
+    return newBill;
+  },
+
   processPayment: (billId, amount, method) => {
     const state = get();
     const count = state.payments.length + 1;
@@ -418,6 +477,50 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
     return newPay;
   },
 
+  cancelAppointment: (appointmentId) => {
+    const state = get();
+    const apt = state.appointments.find((a) => a.id === appointmentId);
+    set((s) => ({
+      appointments: s.appointments.map((a) => (a.id === appointmentId ? { ...a, status: 'Cancelled' } : a))
+    }));
+    if (apt) {
+      get().addAuditLog(state.demoRole, `Cancelled appointment ${appointmentId}`, 'Appointment', appointmentId);
+      get().addNotification('Appointment Cancelled', `Appointment ${appointmentId} for ${apt.patientName} was cancelled.`, 'warning');
+    }
+  },
+
+  addMedicine: (medData) => {
+    const state = get();
+    const newId = `M-${state.medicines.length + 101}`;
+    const newMed: DemoMedicine = {
+      ...medData,
+      id: newId
+    };
+    set((s) => ({ medicines: [newMed, ...s.medicines] }));
+    get().addAuditLog(state.demoRole, `Added new medicine item ${newMed.name}`, 'Medicine', newId);
+    get().addNotification('Inventory Updated', `Medicine ${newMed.name} added to pharmacy inventory.`, 'success');
+    return newMed;
+  },
+
+  updateMedicineStock: (medicineId, newStock) => {
+    const state = get();
+    const med = state.medicines.find((m) => m.id === medicineId);
+    set((s) => ({
+      medicines: s.medicines.map((m) => (m.id === medicineId ? { ...m, stock: newStock } : m))
+    }));
+    if (med) {
+      get().addAuditLog(state.demoRole, `Updated stock for ${med.name} to ${newStock}`, 'Medicine', medicineId);
+    }
+  },
+
+  updatePrescriptionStatus: (prescriptionId, status) => {
+    const state = get();
+    set((s) => ({
+      prescriptions: s.prescriptions.map((r) => (r.id === prescriptionId ? { ...r, status } : r))
+    }));
+    get().addAuditLog(state.demoRole, `Updated prescription ${prescriptionId} status to ${status}`, 'Prescription', prescriptionId);
+  },
+
   markNotificationRead: (id) =>
     set((s) => ({
       notifications: s.notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
@@ -444,38 +547,3 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
       auditLogs: SEEDED_AUDIT_LOGS
     })
 }));
-
-// Helper to add audit log internal
-(useDemoStore as any).getState().addAuditLog = (
-  userRole: UserRole,
-  action: string,
-  entity: string,
-  entityId: string
-) => {
-  const count = useDemoStore.getState().auditLogs.length + 101;
-  const newLog: DemoAuditLog = {
-    id: `LOG-${count}`,
-    timestamp: new Date().toLocaleString(),
-    userRole,
-    userName: `Demo ${userRole}`,
-    action,
-    entity,
-    entityId,
-    details: `${action} executed on ${entity} (${entityId})`
-  };
-  useDemoStore.setState((s) => ({ auditLogs: [newLog, ...s.auditLogs] }));
-};
-
-// Helper to add notification internal
-(useDemoStore as any).getState().addNotification = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'alert') => {
-  const count = useDemoStore.getState().notifications.length + 1;
-  const newNotif: DemoNotification = {
-    id: `NOTIF-${String(count).padStart(2, '0')}`,
-    title,
-    message,
-    timestamp: 'Just now',
-    read: false,
-    type
-  };
-  useDemoStore.setState((s) => ({ notifications: [newNotif, ...s.notifications] }));
-};

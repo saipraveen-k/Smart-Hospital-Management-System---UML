@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Activity, BookOpen, FileText, Github, Layers } from 'lucide-react';
+import { Activity, BookOpen, FileText, Layers } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
